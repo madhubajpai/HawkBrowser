@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">HawkBrowser</string>
+    <string name="go">Go</string>
+    <string name="addressbarhint">Please input url</string>
+
+</resources>
