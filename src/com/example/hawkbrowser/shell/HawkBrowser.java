@@ -141,8 +141,4 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
         
         wv.destroy();
     }
-
-
-
-
 }
