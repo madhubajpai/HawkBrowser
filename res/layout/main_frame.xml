@@ -28,10 +28,11 @@
             android:text="@string/go" />
     </LinearLayout>
 
+    
     <com.example.hawkbrowser.core.HawkWebView
         android:id="@+id/mainframe_webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.7" />
-
+        android:layout_height="match_parent" />
+ 	
+ 	
 </LinearLayout>

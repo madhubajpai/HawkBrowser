@@ -1,5 +1,7 @@
 package com.example.hawkbrowser.shell;
 
+import java.util.ArrayList;
+
 import com.example.hawkbrowser.R;
 import com.example.hawkbrowser.core.*;
 import android.annotation.SuppressLint;
@@ -21,8 +23,10 @@ import android.widget.EditText;
 
 public final class HawkBrowser extends Activity implements WebViewEventListener {
 
-	private HawkWebView wv;
-	
+	private ArrayList<HawkWebView> mViews;
+	private HawkWebView mCurrentView;
+	private int mIndexOfWebView;
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,16 +37,14 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 		//		(LayoutInflater) getLayoutInflater();
 		// View navigationBar = layoutInflater.inflate(R.layout.main_frame, null);
 		
-		/*
-		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
-		wv = new HawkWebView(this);
-		wv.setLayoutParams(
-			new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		layout.addView(wv);
-		*/
+		mViews = new ArrayList<HawkWebView>();
 		
-		wv = (HawkWebView) findViewById(R.id.mainframe_webView);
-		wv.init(new HawkWebViewClient(this));
+		HawkWebView newView = (HawkWebView) findViewById(R.id.mainframe_webView);
+		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
+		mIndexOfWebView = layout.indexOfChild(newView);
+		newView.init(new HawkWebViewClient(this));
+		newView.loadUrl("http://www.baidu.com");
+		showView(newView);
 		
 		final EditText et = (EditText) findViewById(R.id.mainframe_addressbar);
 		final Button goBtn = (Button) findViewById(R.id.mainframe_gobtn);
@@ -53,21 +55,37 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 				String url = et.getText().toString();
 				
 				if(!url.startsWith("http")) {
-					wv.loadUrl("http://" + url);
+					mCurrentView.loadUrl("http://" + url);
 				}
 			}
 		});
+	}
+	
+	private void showView(HawkWebView newView) {
+		mCurrentView = newView;
+		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
+		View curView = layout.findViewById(R.id.mainframe_webView);
 		
-		wv.loadUrl("http://www.baidu.com");
+		if(curView != newView) {
+			layout.removeView(curView);
+			curView.setVisibility(View.INVISIBLE);
+			
+			newView.setVisibility(View.VISIBLE);
+			layout.addView(newView, mIndexOfWebView);
+			
+			if(!mViews.contains(newView)) {
+				mViews.add(newView);
+			}
+		}
 	}
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem back = menu.findItem(R.id.menu_goback);
-		back.setVisible(wv.canGoBack());
+		back.setVisible(mCurrentView.canGoBack());
 		
 		MenuItem forward = menu.findItem(R.id.menu_goforward);
-		forward.setVisible(wv.canGoForward());
+		forward.setVisible(mCurrentView.canGoForward());
 		
 		return true;
 	}
@@ -83,16 +101,23 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case R.id.menu_goback:
-				wv.goBack();
+				mCurrentView.goBack();
 				return true;
 				
 			case R.id.menu_goforward:
-				wv.goForward();
+				mCurrentView.goForward();
 				return true;
 				
 			case R.id.menu_newwindow:
-				Intent intent = new Intent(this, HawkBrowser.class);
-				startActivity(intent);
+				// Intent intent = new Intent(this, HawkBrowser.class);
+				// startActivity(intent);
+				HawkWebView newView = new HawkWebView(this);
+				newView.setId(R.id.mainframe_webView);
+				newView.init(new HawkWebViewClient(this));
+				newView.setLayoutParams(
+					new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+				newView.loadUrl("http://www.baidu.com");
+				showView(newView);
 				return true;
 				
 			case R.id.menu_selectwindow:
@@ -142,6 +167,8 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
     protected void onDestroy() {
         super.onDestroy();
         
-        wv.destroy();
+        for(HawkWebView v : mViews) {
+        	v.destroy();
+        }
     }
 }
