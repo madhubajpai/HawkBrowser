@@ -4,6 +4,7 @@ import com.example.hawkbrowser.R;
 import com.example.hawkbrowser.core.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -90,7 +91,9 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 				return true;
 				
 			case R.id.menu_newwindow:
-				break;
+				Intent intent = new Intent(this, HawkBrowser.class);
+				startActivity(intent);
+				return true;
 				
 			case R.id.menu_selectwindow:
 				break;
