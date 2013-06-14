@@ -4,6 +4,7 @@ import com.example.hawkbrowser.R;
 import com.example.hawkbrowser.core.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,9 +99,13 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 		return false;
 	}
 	
-	@SuppressLint("NewApi")
 	@Override
 	public void onPageFinished(WebView view, String url) {
+	}
+	
+	@SuppressLint("NewApi")
+	@Override
+	public void onPageStarted(WebView view, String url, Bitmap favicon) {
 		if(android.os.Build.VERSION.SDK_INT >= 11) {
 			invalidateOptionsMenu();
 		}
