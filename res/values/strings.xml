@@ -2,6 +2,10 @@
 
     <string name="app_name">HawkBrowser</string>
     <string name="go">Go</string>
+    <string name="goback">back</string>
+    <string name="goforward">forward</string>
+    <string name="newwindow">new</string>
+    <string name="selectwindow">window</string>
     <string name="addressbarhint">Please input url</string>
 
 </resources>

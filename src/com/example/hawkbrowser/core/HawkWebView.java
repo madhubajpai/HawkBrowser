@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class HawkWebView extends WebView {
 
@@ -13,29 +14,25 @@ public class HawkWebView extends WebView {
 	public HawkWebView(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
-		
-		Init();
 	}
 
 	public HawkWebView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
-		
-		Init();
 	}
 
 	
 	
 	public HawkWebView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
-		
-		Init();
+		// TODO Auto-generated constructor stub		
 	}
 	
-	private void Init() {
+	
+	
+	public void init(WebViewClient client) {
 		getSettings().setJavaScriptEnabled(true);
-		setWebViewClient(new HawkWebViewClient());
+		setWebViewClient(client);
 	}
 
 	@Override

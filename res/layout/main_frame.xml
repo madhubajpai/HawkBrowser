@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:id="@+id/main_frame">
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <EditText
-            android:id="@+id/addressbar"
+            android:id="@+id/mainframe_addressbar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.70"
-            android:ems="10"
+            android:layout_weight="3"
             android:hint="@string/addressbarhint" >
 
             <requestFocus />
         </EditText>
 
         <Button
-            android:id="@+id/go"
+            android:id="@+id/mainframe_gobtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.30"
+            android:layout_weight="2.47"
             android:text="@string/go" />
-
     </LinearLayout>
 
-    <!-- 
-	    <WebView
-	        android:id="@+id/webView"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent" />
-	-->
+    <com.example.hawkbrowser.core.HawkWebView
+        android:id="@+id/mainframe_webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7" />
+
 </LinearLayout>
