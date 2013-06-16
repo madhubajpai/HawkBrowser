@@ -8,7 +8,9 @@ import com.example.hawkbrowser.util.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,7 @@ public final class HawkBrowser extends Activity
 	private LayoutParams mWebViewLayoutParams;
 	private int mIndexOfWebView;
 	private NavigationBar mNavigationBar;
+	private WebViewSelecter mViewSelecter;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +91,10 @@ public final class HawkBrowser extends Activity
 			
 			newView.setVisibility(View.VISIBLE);
 			layout.addView(newView, mIndexOfWebView);
-			
-			if(!mViews.contains(newView)) {
-				mViews.add(newView);
-			}
+		}
+		
+		if(!mViews.contains(newView)) {
+			mViews.add(newView);
 		}
 	}
 	
@@ -122,40 +126,54 @@ public final class HawkBrowser extends Activity
 	}
 	
 	private void selectWebView() {
-		LayoutInflater inflater = getLayoutInflater();
-		ViewGroup webThumbContainer = (ViewGroup) 
-			inflater.inflate(R.layout.select_webview, 
-				(ViewGroup)findViewById(R.id.layout_selectwebview));
-		
-		for(HawkWebView wv : mViews) {
-			ViewGroup webThumbItem = (ViewGroup)
-				inflater.inflate(R.layout.select_webview_item, webThumbContainer);
-			
-			TextView titleView = (TextView) 
-					webThumbItem.findViewById(R.id.selectwebviewitem_title);
-			titleView.setText(wv.getTitle());
-			
-			Bitmap webBmp = wv.getDrawingCache(true);// ImageUtil.loadBitmapFromView(wv);
-			ImageView webImage = (ImageView)
-					webThumbItem.findViewById(R.id.selectwebviewitem_image);
-			webImage.setImageBitmap(webBmp);
-			webImage.setTag(wv);
-						
-			webImage.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					showView((HawkWebView)v.getTag());
-				}
-			});
+		if(null != mViewSelecter) {
+			mViewSelecter.dismiss();
+			mViewSelecter = null;
+			return;
 		}
 		
-		Toast toast = new Toast(getApplicationContext());
-		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-		toast.setDuration(Toast.LENGTH_LONG);
-		toast.setView(webThumbContainer);
-		toast.show();
-	}
+		ArrayList<String> titles = new ArrayList<String>();
+		ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
+		
+		for(HawkWebView wv : mViews) {
+			
+			titles.add(wv.getTitle());	
+			Bitmap webBmp = ImageUtil.loadBitmapFromView(wv);
+			bitmaps.add(webBmp);
+		}
+		
+		mViewSelecter = new WebViewSelecter(this, titles, bitmaps);       
+        mViewSelecter.setEventListener(new WebViewSelecter.EventListener() {
+			
+			@Override
+			public void onItemSelect(int i) {
+							
+				if(null != mViewSelecter) {
+					mViewSelecter.dismiss();
+					mViewSelecter = null;
+				}
+				
+				showView(mViews.get(i));
+			}
+			
+			@Override
+			public void onItemClose(int i) {
+				mViews.get(i).destroy();
+				mViews.remove(i);
+				
+				if(mViews.isEmpty()) {
+					mViewSelecter.dismiss();
+					mViewSelecter = null;
+					newWebView();
+				} else {
+					mViewSelecter.updateItems();
+				}
+			}
+		});
+        
+        View selectWindow = findViewById(R.id.mainframe_navigationbar);
+        mViewSelecter.show(selectWindow);
+    }
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

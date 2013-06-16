@@ -48,7 +48,8 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:enabled="false"
-	        android:text="@string/goback" />
+	        android:text="@string/goback"
+	        android:textAlignment="center" />
 	
 	    <TextView
 	        android:id="@+id/navigationbar_forward"
