@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.example.hawkbrowser.R;
 import com.example.hawkbrowser.core.*;
 import com.example.hawkbrowser.util.*;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -172,6 +173,9 @@ public final class HawkBrowser extends Activity
 		});
         
         View selectWindow = findViewById(R.id.mainframe_navigationbar);
+		// Point screenSize = CommonUtil.screenSize(this);
+		// PopupWindow mPopup = new PopupWindow(mViewSelecter.getView(), screenSize.x, 200);
+		// mPopup.showAsDropDown(selectWindow, 0, 0);
         mViewSelecter.show(selectWindow);
     }
 	
