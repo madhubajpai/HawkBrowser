@@ -5,7 +5,10 @@
     <string name="goback">back</string>
     <string name="goforward">forward</string>
     <string name="newwindow">new</string>
-    <string name="selectwindow">window</string>
+    <string name="menu">menu</string>
+    <string name="home">home</string>
+    <string name="selectwindow">windows</string>
     <string name="addressbarhint">Please input url</string>
+    <string name="webviewtitle">web page</string>
 
 </resources>

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 import com.example.hawkbrowser.R;
 import com.example.hawkbrowser.core.*;
+import com.example.hawkbrowser.util.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,16 +17,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public final class HawkBrowser extends Activity implements WebViewEventListener {
+public final class HawkBrowser extends Activity 
+			implements NavigationBar.EventListener, WebViewEventListener {
 
 	private ArrayList<HawkWebView> mViews;
 	private HawkWebView mCurrentView;
+	private LayoutParams mWebViewLayoutParams;
 	private int mIndexOfWebView;
+	private NavigationBar mNavigationBar;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +45,21 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 		
 		mViews = new ArrayList<HawkWebView>();
 		
+		ViewGroup navigationBar = 
+				(ViewGroup)findViewById(R.id.mainframe_navigationbar);
+		mNavigationBar = new NavigationBar(this, navigationBar, this);
+		
 		HawkWebView newView = (HawkWebView) findViewById(R.id.mainframe_webView);
+		mWebViewLayoutParams = newView.getLayoutParams();
 		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
 		mIndexOfWebView = layout.indexOfChild(newView);
 		newView.init(new HawkWebViewClient(this));
 		newView.loadUrl("http://www.baidu.com");
 		showView(newView);
+		
+		// LayoutInflater layoutInflater = 
+		// (LayoutInflater) getLayoutInflater();
+		// View navigationBar = layoutInflater.inflate(R.layout.navigation_bar, layout);
 		
 		final EditText et = (EditText) findViewById(R.id.mainframe_addressbar);
 		final Button goBtn = (Button) findViewById(R.id.mainframe_gobtn);
@@ -68,7 +83,7 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 		
 		if(curView != newView) {
 			layout.removeView(curView);
-			curView.setVisibility(View.INVISIBLE);
+			// curView.setVisibility(View.INVISIBLE);
 			
 			newView.setVisibility(View.VISIBLE);
 			layout.addView(newView, mIndexOfWebView);
@@ -97,6 +112,51 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 		return true;
 	}
 	
+	private void newWebView() {
+		HawkWebView newView = new HawkWebView(this);
+		newView.setId(R.id.mainframe_webView);
+		newView.init(new HawkWebViewClient(this));
+		newView.setLayoutParams(mWebViewLayoutParams);
+		newView.loadUrl("http://www.baidu.com");
+		showView(newView);
+	}
+	
+	private void selectWebView() {
+		LayoutInflater inflater = getLayoutInflater();
+		ViewGroup webThumbContainer = (ViewGroup) 
+			inflater.inflate(R.layout.select_webview, 
+				(ViewGroup)findViewById(R.id.layout_selectwebview));
+		
+		for(HawkWebView wv : mViews) {
+			ViewGroup webThumbItem = (ViewGroup)
+				inflater.inflate(R.layout.select_webview_item, webThumbContainer);
+			
+			TextView titleView = (TextView) 
+					webThumbItem.findViewById(R.id.selectwebviewitem_title);
+			titleView.setText(wv.getTitle());
+			
+			Bitmap webBmp = wv.getDrawingCache(true);// ImageUtil.loadBitmapFromView(wv);
+			ImageView webImage = (ImageView)
+					webThumbItem.findViewById(R.id.selectwebviewitem_image);
+			webImage.setImageBitmap(webBmp);
+			webImage.setTag(wv);
+						
+			webImage.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					showView((HawkWebView)v.getTag());
+				}
+			});
+		}
+		
+		Toast toast = new Toast(getApplicationContext());
+		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.setView(webThumbContainer);
+		toast.show();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
@@ -111,32 +171,55 @@ public final class HawkBrowser extends Activity implements WebViewEventListener 
 			case R.id.menu_newwindow:
 				// Intent intent = new Intent(this, HawkBrowser.class);
 				// startActivity(intent);
-				HawkWebView newView = new HawkWebView(this);
-				newView.setId(R.id.mainframe_webView);
-				newView.init(new HawkWebViewClient(this));
-				newView.setLayoutParams(
-					new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-				newView.loadUrl("http://www.baidu.com");
-				showView(newView);
+				newWebView();
 				return true;
 				
 			case R.id.menu_selectwindow:
-				break;
+				selectWebView();
+				return true;
 		}
 		
 		return false;
 	}
 	
 	@Override
-	public void onPageFinished(WebView view, String url) {
+	public void onGoBack() {
+		mCurrentView.goBack();
 	}
 	
-	@SuppressLint("NewApi")
+	@Override
+	public void onGoForward() {
+		mCurrentView.goForward();
+	}
+	
+	@Override
+	public void onNewWebView() {
+		newWebView();
+	}
+	
+	@Override
+	public void onSelectWebView() {
+		selectWebView();
+	}
+	
+	@Override
+	public void onPageFinished(WebView view, String url) {
+		setBackForwardState(view);
+	}
+	
 	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		setBackForwardState(view);
+	}
+
+	@SuppressLint("NewApi")
+	private void setBackForwardState(WebView view) {
 		if(android.os.Build.VERSION.SDK_INT >= 11) {
 			invalidateOptionsMenu();
 		}
+		
+		mNavigationBar.setCanGoBack(view.canGoBack());
+		mNavigationBar.setCanGoForward(view.canGoForward());
 	}
 
 	protected void onStart() {
