@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,56 +33,74 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
+    
+   	<Spinner
+   	    android:id="@+id/spinner1"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="1dp"
+   	    android:background="@drawable/zxingscan" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mainframe_navigationbar"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" 
-	    android:layout_weight="0"
-	    android:orientation="horizontal" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:background="@drawable/toolbar_bg"
+        android:orientation="horizontal" >
 	    
-	    <TextView
+	    <ImageButton
 	        android:id="@+id/navigationbar_back"
 	        style="?android:attr/textAppearanceMedium"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
+	        android:background="@drawable/toolbar_bg"
+	        android:contentDescription="@string/goback"
 	        android:enabled="false"
-	        android:text="@string/goback"
-	        android:textAlignment="center" />
+	        android:src="@drawable/toobar_back_button" />
 	
-	    <TextView
+	    <ImageButton
 	        android:id="@+id/navigationbar_forward"
 	        style="?android:attr/textAppearanceMedium"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:enabled="false"
-	        android:text="@string/goforward" />
+	        android:background="@drawable/toolbar_bg"
+	        android:src="@drawable/toolbar_forward_button"
+	        android:contentDescription="@string/goforward" />
 	
-	    <TextView
+	    <ImageButton
 	        android:id="@+id/navigationbar_menu"
 	        style="?android:attr/textAppearanceMedium"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:text="@string/menu" />
+	        android:contentDescription="@string/menu"
+	        android:background="@drawable/toolbar_bg"
+	        android:src="@drawable/toolbar_menu_normal" />
 	
-	    <TextView
+	    <ImageButton
 	        android:id="@+id/navigationbar_home"
 	        style="?android:attr/textAppearanceMedium"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:text="@string/home" />
+	        android:background="@drawable/toolbar_bg"
+	        android:src="@drawable/toolbar_home_normal"
+	        android:contentDescription="@string/home" />
 	
-	    <TextView
+	    <ImageButton
 	        android:id="@+id/navigationbar_selectwindow"
 	        style="?android:attr/textAppearanceMedium"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:text="@string/selectwindow" />
+	        android:background="@drawable/toolbar_bg"
+	        android:src="@drawable/toolbar_multi_normal"
+	        android:contentDescription="@string/selectwindow" />
+
    </LinearLayout>
 
 </LinearLayout>
