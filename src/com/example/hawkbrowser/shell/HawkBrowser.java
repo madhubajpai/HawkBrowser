@@ -26,18 +26,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public final class HawkBrowser extends Activity 
-			implements NavigationBar.EventListener, WebViewEventListener {
+	implements NavigationBar.EventListener,
+		HawkWebViewClient.EventListener, HawkWebChromeClient.EventListener {
 
-	private ArrayList<HawkWebView> mViews;
-	private HawkWebView mCurrentView;
-	private LayoutParams mWebViewLayoutParams;
-	private int mIndexOfWebView;
-	private NavigationBar mNavigationBar;
-	private WebViewSelecter mViewSelecter;
+	private ArrayList<HawkWebView> 	mViews;
+	private HawkWebView 			mCurrentView;
+	private LayoutParams 			mWebViewLayoutParams;
+	private int 					mIndexOfWebView;
+	private NavigationBar 			mNavigationBar;
+	private WebViewSelecter			mViewSelecter;
+	private AddressBar				mAddressBar;
+	private ProgressBar				mProgressBar;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +64,22 @@ public final class HawkBrowser extends Activity
 		mWebViewLayoutParams = newView.getLayoutParams();
 		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
 		mIndexOfWebView = layout.indexOfChild(newView);
-		newView.init(new HawkWebViewClient(this));
+		newView.init(new HawkWebViewClient(this), 
+			new HawkWebChromeClient(this));
 		newView.loadUrl(getResources().getString(R.string.homepageurl));
 		showView(newView);
 		
 		ViewGroup addressBarView = (ViewGroup) 
 				findViewById(R.id.mainframe_addressbar);
-		AddressBar addressBar = new AddressBar(this, addressBarView);
-		addressBar.setEventListener(new AddressBar.EventListener() {
+		mAddressBar = new AddressBar(this, addressBarView);
+		mAddressBar.setEventListener(new AddressBar.EventListener() {
 			@Override
 			public void onGo(String url) {
 				mCurrentView.loadUrl(url);
 			}
 		});		
+		
+		mProgressBar = (ProgressBar) findViewById(R.id.mainframe_progressbar);
 	}
 	
 	private void showView(HawkWebView newView) {
@@ -86,6 +93,9 @@ public final class HawkBrowser extends Activity
 			
 			newView.setVisibility(View.VISIBLE);
 			layout.addView(newView, mIndexOfWebView);
+			
+			mAddressBar.setTitle(newView.getTitle());
+			mProgressBar.setProgress(newView.getProgress());
 		}
 		
 		if(!mViews.contains(newView)) {
@@ -114,7 +124,8 @@ public final class HawkBrowser extends Activity
 	private void newWebView() {
 		HawkWebView newView = new HawkWebView(this);
 		newView.setId(R.id.mainframe_webView);
-		newView.init(new HawkWebViewClient(this));
+		newView.init(new HawkWebViewClient(this), 
+			new HawkWebChromeClient(this));
 		newView.setLayoutParams(mWebViewLayoutParams);
 		newView.loadUrl("http://www.baidu.com");
 		showView(newView);
@@ -167,6 +178,13 @@ public final class HawkBrowser extends Activity
 					newWebView();
 				} else {
 					mViewSelecter.updateItems();
+					
+					int nextView = i + 1;
+					if(nextView >= mViews.size()) {
+						nextView = mViews.size() - 1;
+					}
+					
+					showView(mViews.get(nextView));
 				}
 			}
 		});
@@ -223,6 +241,19 @@ public final class HawkBrowser extends Activity
 		selectWebView();
 	}
 	
+	// WebChromeClient Listener start
+	@Override
+	public void onReceivedTitle(WebView view, String title) {
+		mAddressBar.setTitle(title);
+	}
+	
+	@Override
+	public void onProgressChanged(WebView view, int newProgress) {
+		mProgressBar.setProgress(newProgress);
+	}
+	// WebChromeClient Listener end
+	
+	// WebViewClient Listener start
 	@Override
 	public void onPageFinished(WebView view, String url) {
 		setBackForwardState(view);
@@ -232,6 +263,7 @@ public final class HawkBrowser extends Activity
 	public void onPageStarted(WebView view, String url, Bitmap favicon) {
 		setBackForwardState(view);
 	}
+	// WebViewClient Listener end
 
 	@SuppressLint("NewApi")
 	private void setBackForwardState(WebView view) {

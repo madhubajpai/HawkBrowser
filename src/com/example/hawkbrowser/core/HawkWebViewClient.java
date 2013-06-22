@@ -1,14 +1,22 @@
 package com.example.hawkbrowser.core;
 
+import android.graphics.Bitmap;
 import android.webkit.WebViewClient;
 import android.webkit.WebView;
 
 public class HawkWebViewClient extends WebViewClient {
 
-	private WebViewEventListener	wvEventListener;
+	private EventListener	mListener;
 	
-	public HawkWebViewClient(WebViewEventListener wvel) {
-		wvEventListener = wvel;
+	public interface EventListener {
+		
+		void onPageFinished(WebView view, String url);
+		void onPageStarted(WebView view, String url, Bitmap favicon);
+	}
+
+	
+	public HawkWebViewClient(EventListener listener) {
+		mListener = listener;
 	}
 	
 	@Override
@@ -18,7 +26,19 @@ public class HawkWebViewClient extends WebViewClient {
 
 	@Override
 	public void onPageFinished(WebView view, String url) {
-		wvEventListener.onPageFinished(view, url);
 		super.onPageFinished(view, url);
+		
+		if(null != mListener) {
+			mListener.onPageFinished(view, url);
+		}
+	}
+	
+	@Override
+	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		super.onPageStarted(view, url, favicon);
+		
+		if(null != mListener) {
+			mListener.onPageStarted(view, url, favicon);
+		}
 	}
 }

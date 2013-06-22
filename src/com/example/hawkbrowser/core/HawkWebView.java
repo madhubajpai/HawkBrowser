@@ -24,8 +24,11 @@ public class HawkWebView extends WebView {
 	
 	
 	
-	public void init(WebViewClient client) {
+	public void init(WebViewClient viewClient, 
+			HawkWebChromeClient chromeClient) {
+		
 		getSettings().setJavaScriptEnabled(true);
-		setWebViewClient(client);
+		setWebViewClient(viewClient);
+		setWebChromeClient(chromeClient);
 	}
 }

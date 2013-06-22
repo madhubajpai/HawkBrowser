@@ -10,17 +10,22 @@ import android.widget.EditText;
 
 public class AddressBar {
 
-	private	ViewGroup		mAddressBarView;
 	private EventListener	mListener;
 	private Context			mContext;
+	private	EditText		mAddressEdit;
+	private	View			mGoView;
+	private	View			mClearView;
 	
 	public interface EventListener {
 		void onGo(String url);
 	}
 	
 	public AddressBar(Context ctx, ViewGroup view) {
-		mAddressBarView = view;
 		mContext = ctx;
+		
+		mAddressEdit = (EditText) view.findViewById(R.id.addressbar_edit);
+		mGoView = view.findViewById(R.id.addressbar_gobtn);
+		mClearView = view.findViewById(R.id.addressbar_clearbtn);
 		
 		init();
 	}
@@ -34,16 +39,17 @@ public class AddressBar {
 		mListener = listener;
 	}
 	
+	public void setTitle(String title) {
+		mAddressEdit.setText(title);
+	}
+	
 	private void init() {
-		final EditText et = (EditText) 
-				mAddressBarView.findViewById(R.id.addressbar_edit);
 		
-		final View goBtn = mAddressBarView.findViewById(R.id.addressbar_gobtn);
-		goBtn.setOnClickListener(new View.OnClickListener() {
+		mGoView.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				String url = et.getText().toString();
+				String url = mAddressEdit.getText().toString();
 				
 				if(url.isEmpty()) {
 					Resources rs = mContext.getResources();
@@ -60,13 +66,11 @@ public class AddressBar {
 			}
 		});
 		
-		final View clearBtn = 
-				mAddressBarView.findViewById(R.id.addressbar_clearbtn);
-		clearBtn.setOnClickListener(new View.OnClickListener() {
+		mClearView.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				et.setText("");				
+				mAddressEdit.setText("");				
 			}
 		});
 	}

@@ -9,24 +9,28 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mainframe_addressbar"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_margin="5dp"
+        android:layout_height="35dp"
+        android:background="@drawable/addressbar_bg"
         android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/addressbar_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/addressbar_margin"
+            android:layout_marginLeft="@dimen/addressbar_margin"
+            android:layout_marginTop="@dimen/addressbar_margin"
             android:layout_weight="1"
-            android:background="@drawable/addressbar_input_bg_normal"
-             />
+            android:background="@drawable/addressbar_input_bg_normal" />
 	
     	<ImageButton
     	    android:id="@+id/addressbar_clearbtn"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-			android:layout_marginRight="5dp"
-			android:layout_marginLeft="5dp"
+			android:layout_marginRight="@dimen/addressbar_margin"
+			android:layout_marginLeft="@dimen/addressbar_margin"
+			android:layout_marginTop="@dimen/addressbar_margin"
+			android:layout_marginBottom="@dimen/addressbar_margin"
     	    android:background="@drawable/addressbar_button_bg"
     	    android:contentDescription="@string/clear"
     	    android:layout_gravity="center"
@@ -37,7 +41,9 @@
 	        android:layout_width="1dp"
 	        android:layout_height="20dp"
 	        android:layout_gravity="center"
-	        android:layout_marginRight="5dp"
+	        android:layout_marginRight="@dimen/addressbar_margin"
+			android:layout_marginTop="@dimen/addressbar_margin"
+			android:layout_marginBottom="@dimen/addressbar_margin"
 	        android:background="@color/addresssbar_spinner_color"
 	        android:orientation="vertical" />
 
@@ -45,6 +51,9 @@
 	        android:id="@+id/addressbar_gobtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="match_parent"
+	        android:layout_marginTop="@dimen/addressbar_margin"
+			android:layout_marginBottom="@dimen/addressbar_margin"
+			android:layout_marginRight="@dimen/addressbar_margin"
 	        android:background="@drawable/addressbar_button_bg"
 	        android:contentDescription="@string/go"
 	        android:layout_gravity="center"
@@ -52,6 +61,16 @@
 
 	 </LinearLayout>
 
+     <ProgressBar
+         android:id="@+id/mainframe_progressbar"
+         style="?android:attr/progressBarStyleHorizontal"
+         android:layout_width="match_parent"
+         android:layout_height="5dp"
+         android:background="@drawable/progress_background"
+         android:max="100"
+         android:progress="10"
+         android:progressDrawable="@drawable/progressbar" />
+    
     <com.example.hawkbrowser.core.HawkWebView
         android:id="@+id/mainframe_webView"
         android:layout_width="match_parent"
