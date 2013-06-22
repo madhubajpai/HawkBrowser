@@ -5,27 +5,51 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" 
-	    android:layout_weight="0"
-	    android:orientation="horizontal" >
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mainframe_addressbar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/addressbar_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/addressbar_input_bg_normal"
+             />
+	
+    	<ImageButton
+    	    android:id="@+id/addressbar_clearbtn"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+			android:layout_marginRight="5dp"
+			android:layout_marginLeft="5dp"
+    	    android:background="@drawable/addressbar_bg"
+    	    android:contentDescription="@string/clear"
+    	    android:layout_gravity="center"
+    	    android:src="@drawable/icon_clear" />
 	    
-	    <EditText
-	        android:id="@+id/mainframe_addressbar"
-	        android:layout_height="wrap_content"
-	        android:layout_width="0dp"
-	       	android:layout_weight="1"
-	        android:hint="@string/addressbarhint" >
-	
-	        <requestFocus />
-	    </EditText>
-	
-	    <Button
-	        android:id="@+id/mainframe_gobtn"
+	    <Spinner
+	        android:id="@+id/addressbar_spinner"
+	        android:layout_width="1dp"
+	        android:layout_height="20dp"
+	        android:layout_gravity="center"
+	        android:layout_marginRight="5dp"
+	        android:background="@color/addresssbar_spinner_color"
+	        android:orientation="vertical" />
+
+	    <ImageButton
+	        android:id="@+id/addressbar_gobtn"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/go" />
+	        android:layout_height="match_parent"
+	        android:background="@drawable/addressbar_bg"
+	        android:contentDescription="@string/go"
+	        android:layout_gravity="center"
+	        android:src="@drawable/icon_go" />
+
 	 </LinearLayout>
 
     <com.example.hawkbrowser.core.HawkWebView
@@ -35,7 +59,7 @@
         android:layout_weight="1" />
     
    	<Spinner
-   	    android:id="@+id/spinner1"
+   	    android:id="@+id/bottom_spinner"
    	    android:layout_width="match_parent"
    	    android:layout_height="1dp"
    	    android:background="@drawable/zxingscan" />

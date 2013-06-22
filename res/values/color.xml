@@ -2,6 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <color name="selectwebview_text_color">#99ccff</color>  
-    <color name="spinner_color">#99ccff</color>
+    <color name="bottom_spinner_color">#99ccff</color>
+    <color name="addresssbar_spinner_color">#CCCCCC</color>
     
 </resources>

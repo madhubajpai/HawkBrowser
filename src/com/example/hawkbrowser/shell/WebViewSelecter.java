@@ -62,10 +62,10 @@ public class WebViewSelecter implements View.OnTouchListener {
 			final int moveLen = 50;
 			
 			if(event.getX() - mStartPosX > moveLen) {
-				++mCurrentScreen;
+				--mCurrentScreen;
 				isMove = true;
 			} else if(event.getX() - mStartPosX < -moveLen) {
-				--mCurrentScreen;
+				++mCurrentScreen;
 				isMove = true;
 			}
 							

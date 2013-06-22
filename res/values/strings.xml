@@ -11,5 +11,8 @@
     <string name="addressbarhint">Please input url</string>
     <string name="webviewtitle">web page</string>
     <string name="close">close</string>
+    <string name="clear">clear</string>
+    <string name="homepageurl">http://www.baidu.com</string>
+    <string name="defaultpagetitle">无标题</string>
 
 </resources>

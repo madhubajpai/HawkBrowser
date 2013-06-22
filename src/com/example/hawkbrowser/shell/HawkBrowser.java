@@ -61,26 +61,18 @@ public final class HawkBrowser extends Activity
 		ViewGroup layout = (ViewGroup) findViewById(R.id.main_frame);
 		mIndexOfWebView = layout.indexOfChild(newView);
 		newView.init(new HawkWebViewClient(this));
-		newView.loadUrl("http://www.baidu.com");
+		newView.loadUrl(getResources().getString(R.string.homepageurl));
 		showView(newView);
 		
-		// LayoutInflater layoutInflater = 
-		// (LayoutInflater) getLayoutInflater();
-		// View navigationBar = layoutInflater.inflate(R.layout.navigation_bar, layout);
-		
-		final EditText et = (EditText) findViewById(R.id.mainframe_addressbar);
-		final Button goBtn = (Button) findViewById(R.id.mainframe_gobtn);
-		goBtn.setOnClickListener(new View.OnClickListener() {
-			
+		ViewGroup addressBarView = (ViewGroup) 
+				findViewById(R.id.mainframe_addressbar);
+		AddressBar addressBar = new AddressBar(this, addressBarView);
+		addressBar.setEventListener(new AddressBar.EventListener() {
 			@Override
-			public void onClick(View v) {
-				String url = et.getText().toString();
-				
-				if(!url.startsWith("http")) {
-					mCurrentView.loadUrl("http://" + url);
-				}
+			public void onGo(String url) {
+				mCurrentView.loadUrl(url);
 			}
-		});
+		});		
 	}
 	
 	private void showView(HawkWebView newView) {
@@ -140,7 +132,12 @@ public final class HawkBrowser extends Activity
 		
 		for(HawkWebView wv : mViews) {
 			
-			titles.add(wv.getTitle());	
+			String title = wv.getTitle();
+			if(title.isEmpty()) {
+				title = getResources().getString(R.string.defaultpagetitle);
+			}
+			
+			titles.add(title);	
 			Bitmap webBmp = ImageUtil.loadBitmapFromView(wv);
 			bitmaps.add(webBmp);
 		}
