@@ -27,7 +27,7 @@
     	    android:layout_height="wrap_content"
 			android:layout_marginRight="5dp"
 			android:layout_marginLeft="5dp"
-    	    android:background="@drawable/addressbar_bg"
+    	    android:background="@drawable/addressbar_button_bg"
     	    android:contentDescription="@string/clear"
     	    android:layout_gravity="center"
     	    android:src="@drawable/icon_clear" />
@@ -45,7 +45,7 @@
 	        android:id="@+id/addressbar_gobtn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="match_parent"
-	        android:background="@drawable/addressbar_bg"
+	        android:background="@drawable/addressbar_button_bg"
 	        android:contentDescription="@string/go"
 	        android:layout_gravity="center"
 	        android:src="@drawable/icon_go" />
@@ -79,7 +79,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:background="@drawable/toolbar_bg"
+	        android:background="@drawable/toolbar_button_bg"
 	        android:contentDescription="@string/goback"
 	        android:enabled="false"
 	        android:src="@drawable/toobar_back_button" />
@@ -91,7 +91,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:enabled="false"
-	        android:background="@drawable/toolbar_bg"
+	        android:background="@drawable/toolbar_button_bg"
 	        android:src="@drawable/toolbar_forward_button"
 	        android:contentDescription="@string/goforward" />
 	
@@ -102,7 +102,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:contentDescription="@string/menu"
-	        android:background="@drawable/toolbar_bg"
+	        android:background="@drawable/toolbar_button_bg"
 	        android:src="@drawable/toolbar_menu_normal" />
 	
 	    <ImageButton
@@ -111,7 +111,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:background="@drawable/toolbar_bg"
+	        android:background="@drawable/toolbar_button_bg"
 	        android:src="@drawable/toolbar_home_normal"
 	        android:contentDescription="@string/home" />
 	
@@ -121,7 +121,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:background="@drawable/toolbar_bg"
+	        android:background="@drawable/toolbar_button_bg"
 	        android:src="@drawable/toolbar_multi_normal"
 	        android:contentDescription="@string/selectwindow" />
 
