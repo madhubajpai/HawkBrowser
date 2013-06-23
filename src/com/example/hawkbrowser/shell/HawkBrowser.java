@@ -42,6 +42,7 @@ public final class HawkBrowser extends Activity
 	private WebViewSelecter			mViewSelecter;
 	private AddressBar				mAddressBar;
 	private ProgressBar				mProgressBar;
+	private PopMenuBar				mPopMenuBar;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public final class HawkBrowser extends Activity
 		}
 	}
 	
+	/* disable options menu
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem back = menu.findItem(R.id.menu_goback);
@@ -120,6 +122,33 @@ public final class HawkBrowser extends Activity
 		mi.inflate(R.menu.option_menu, menu);
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+			case R.id.menu_goback:
+				mCurrentView.goBack();
+				return true;
+				
+			case R.id.menu_goforward:
+				mCurrentView.goForward();
+				return true;
+				
+			case R.id.menu_newwindow:
+				// Intent intent = new Intent(this, HawkBrowser.class);
+				// startActivity(intent);
+				newWebView();
+				return true;
+				
+			case R.id.menu_selectwindow:
+				selectWebView();
+				return true;
+		}
+		
+		return false;
+	}
+	
+	*/
 	
 	private void newWebView() {
 		HawkWebView newView = new HawkWebView(this);
@@ -196,31 +225,7 @@ public final class HawkBrowser extends Activity
         mViewSelecter.show(selectWindow);
     }
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case R.id.menu_goback:
-				mCurrentView.goBack();
-				return true;
-				
-			case R.id.menu_goforward:
-				mCurrentView.goForward();
-				return true;
-				
-			case R.id.menu_newwindow:
-				// Intent intent = new Intent(this, HawkBrowser.class);
-				// startActivity(intent);
-				newWebView();
-				return true;
-				
-			case R.id.menu_selectwindow:
-				selectWebView();
-				return true;
-		}
-		
-		return false;
-	}
-	
+	// NavigationBar Listener start
 	@Override
 	public void onGoBack() {
 		mCurrentView.goBack();
@@ -237,9 +242,23 @@ public final class HawkBrowser extends Activity
 	}
 	
 	@Override
+	public void onMenu() {
+		if(null == mPopMenuBar) {
+			mPopMenuBar = new PopMenuBar(this);
+			View anchor = findViewById(R.id.navigationbar_menu);
+			mPopMenuBar.show(anchor);
+		} else {
+			mPopMenuBar.dismiss();
+			mPopMenuBar = null;
+		}
+			
+	}
+	
+	@Override
 	public void onSelectWebView() {
 		selectWebView();
 	}
+	// NavigationBar Listener end
 	
 	// WebChromeClient Listener start
 	@Override

@@ -13,11 +13,15 @@ public final class R {
     public static final class color {
         public static final int addresssbar_spinner_color=0x7f040002;
         public static final int bottom_spinner_color=0x7f040001;
+        public static final int popmenu_text_color=0x7f040003;
         public static final int selectwebview_text_color=0x7f040000;
     }
     public static final class dimen {
         public static final int addressbar_height=0x7f050002;
         public static final int addressbar_margin=0x7f050000;
+        public static final int popmenu_height=0x7f050005;
+        public static final int popmenu_margin=0x7f050003;
+        public static final int popmenu_textSize=0x7f050004;
         public static final int progressbar_height=0x7f050001;
     }
     public static final class drawable {
@@ -30,20 +34,31 @@ public final class R {
         public static final int ic_launcher=0x7f020006;
         public static final int icon_clear=0x7f020007;
         public static final int icon_go=0x7f020008;
-        public static final int progress_background=0x7f020009;
-        public static final int progressbar=0x7f02000a;
-        public static final int toobar_back_button=0x7f02000b;
-        public static final int toolbar_back_disable=0x7f02000c;
-        public static final int toolbar_back_normal=0x7f02000d;
-        public static final int toolbar_bg=0x7f02000e;
-        public static final int toolbar_button_bg=0x7f02000f;
-        public static final int toolbar_forward_button=0x7f020010;
-        public static final int toolbar_forward_disable=0x7f020011;
-        public static final int toolbar_forward_normal=0x7f020012;
-        public static final int toolbar_home_normal=0x7f020013;
-        public static final int toolbar_menu_normal=0x7f020014;
-        public static final int toolbar_multi_normal=0x7f020015;
-        public static final int zxingscan=0x7f020016;
+        public static final int pop_menu_add_bookmark=0x7f020009;
+        public static final int pop_menu_bg=0x7f02000a;
+        public static final int pop_menu_bg_down_arrow=0x7f02000b;
+        public static final int pop_menu_download=0x7f02000c;
+        public static final int pop_menu_help=0x7f02000d;
+        public static final int pop_menu_history=0x7f02000e;
+        public static final int pop_menu_quit=0x7f02000f;
+        public static final int pop_menu_refresh=0x7f020010;
+        public static final int pop_menu_skin=0x7f020011;
+        public static final int pop_menu_system_setting=0x7f020012;
+        public static final int popmenu_button_bg=0x7f020013;
+        public static final int progress_background=0x7f020014;
+        public static final int progressbar=0x7f020015;
+        public static final int toobar_back_button=0x7f020016;
+        public static final int toolbar_back_disable=0x7f020017;
+        public static final int toolbar_back_normal=0x7f020018;
+        public static final int toolbar_bg=0x7f020019;
+        public static final int toolbar_button_bg=0x7f02001a;
+        public static final int toolbar_forward_button=0x7f02001b;
+        public static final int toolbar_forward_disable=0x7f02001c;
+        public static final int toolbar_forward_normal=0x7f02001d;
+        public static final int toolbar_home_normal=0x7f02001e;
+        public static final int toolbar_menu_normal=0x7f02001f;
+        public static final int toolbar_multi_normal=0x7f020020;
+        public static final int zxingscan=0x7f020021;
     }
     public static final class id {
         public static final int addressbar_clearbtn=0x7f0a0003;
@@ -51,35 +66,47 @@ public final class R {
         public static final int addressbar_gobtn=0x7f0a0005;
         public static final int addressbar_spinner=0x7f0a0004;
         public static final int bottom_spinner=0x7f0a0008;
-        public static final int layout_selectwebview=0x7f0a000f;
-        public static final int layout_selectwebviewitem=0x7f0a0013;
-        public static final int layout_selectwebviewitem1=0x7f0a0010;
-        public static final int layout_selectwebviewitem2=0x7f0a0011;
-        public static final int layout_selectwebviewitem3=0x7f0a0012;
+        public static final int layout_popmenu=0x7f0a000f;
+        public static final int layout_selectwebview=0x7f0a001a;
+        public static final int layout_selectwebviewitem=0x7f0a001e;
+        public static final int layout_selectwebviewitem1=0x7f0a001b;
+        public static final int layout_selectwebviewitem2=0x7f0a001c;
+        public static final int layout_selectwebviewitem3=0x7f0a001d;
         public static final int main_frame=0x7f0a0000;
         public static final int mainframe_addressbar=0x7f0a0001;
         public static final int mainframe_navigationbar=0x7f0a0009;
         public static final int mainframe_progressbar=0x7f0a0006;
         public static final int mainframe_webView=0x7f0a0007;
-        public static final int menu_goback=0x7f0a0016;
-        public static final int menu_goforward=0x7f0a0017;
-        public static final int menu_newwindow=0x7f0a0018;
-        public static final int menu_selectwindow=0x7f0a0019;
+        public static final int menu_goback=0x7f0a0021;
+        public static final int menu_goforward=0x7f0a0022;
+        public static final int menu_newwindow=0x7f0a0023;
+        public static final int menu_selectwindow=0x7f0a0024;
         public static final int navigationbar_back=0x7f0a000a;
         public static final int navigationbar_forward=0x7f0a000b;
         public static final int navigationbar_home=0x7f0a000d;
         public static final int navigationbar_menu=0x7f0a000c;
         public static final int navigationbar_selectwindow=0x7f0a000e;
-        public static final int selectwebviewitem_image=0x7f0a0015;
-        public static final int selectwebviewitem_title=0x7f0a0014;
+        public static final int popmenu_addbookmark=0x7f0a0012;
+        public static final int popmenu_bokmarkhistory=0x7f0a0011;
+        public static final int popmenu_downloadmanager=0x7f0a0016;
+        public static final int popmenu_exit=0x7f0a0019;
+        public static final int popmenu_help=0x7f0a0018;
+        public static final int popmenu_refresh=0x7f0a0013;
+        public static final int popmenu_row1=0x7f0a0010;
+        public static final int popmenu_row2=0x7f0a0015;
+        public static final int popmenu_skin=0x7f0a0017;
+        public static final int popmenu_systemsetting=0x7f0a0014;
+        public static final int selectwebviewitem_image=0x7f0a0020;
+        public static final int selectwebviewitem_title=0x7f0a001f;
     }
     public static final class integer {
         public static final int progressbar_max=0x7f060000;
     }
     public static final class layout {
         public static final int main_frame=0x7f030000;
-        public static final int select_webview=0x7f030001;
-        public static final int select_webview_item=0x7f030002;
+        public static final int pop_menu=0x7f030001;
+        public static final int select_webview=0x7f030002;
+        public static final int select_webview_item=0x7f030003;
     }
     public static final class menu {
         public static final int option_menu=0x7f090000;
@@ -97,6 +124,14 @@ public final class R {
         public static final int homepageurl=0x7f07000c;
         public static final int menu=0x7f070005;
         public static final int newwindow=0x7f070004;
+        public static final int popmenu_addbookmark=0x7f07000f;
+        public static final int popmenu_bookmarkhistory=0x7f07000e;
+        public static final int popmenu_downloadmanager=0x7f070012;
+        public static final int popmenu_exit=0x7f070015;
+        public static final int popmenu_help=0x7f070014;
+        public static final int popmenu_refresh=0x7f070010;
+        public static final int popmenu_skin=0x7f070013;
+        public static final int popmenu_systemsetting=0x7f070011;
         public static final int selectwindow=0x7f070007;
         public static final int webviewtitle=0x7f070009;
     }

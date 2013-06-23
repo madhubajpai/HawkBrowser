@@ -14,5 +14,13 @@
     <string name="clear">clear</string>
     <string name="homepageurl">http://www.baidu.com</string>
     <string name="defaultpagetitle">无标题</string>
+    <string name="popmenu_bookmarkhistory">书签/历史</string>
+    <string name="popmenu_addbookmark">添加书签</string>
+    <string name="popmenu_refresh">刷新</string>
+    <string name="popmenu_systemsetting">系统设置</string>
+    <string name="popmenu_downloadmanager">下载管理</string>
+    <string name="popmenu_skin">皮肤</string>
+    <string name="popmenu_help">帮助反馈</string>
+    <string name="popmenu_exit">退出</string>
 
 </resources>

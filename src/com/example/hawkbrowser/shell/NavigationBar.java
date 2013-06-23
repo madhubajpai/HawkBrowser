@@ -15,6 +15,7 @@ public class NavigationBar {
 		void onGoForward();
 		void onNewWebView();
 		void onSelectWebView();
+		void onMenu();
 	}
 	
 	ViewGroup		mNavigationBar;
@@ -53,7 +54,9 @@ public class NavigationBar {
 			
 			@Override
 			public void onClick(View v) {
-				mEventListener.onGoBack();
+				if(null != mEventListener) {
+					mEventListener.onGoBack();
+				}
 			}
 		});
 		
@@ -63,7 +66,20 @@ public class NavigationBar {
 			
 			@Override
 			public void onClick(View v) {
-				mEventListener.onGoForward();
+				if(null != mEventListener) {
+					mEventListener.onGoForward();
+				}
+			}
+		});
+		
+		View menu = mNavigationBar.findViewById(R.id.navigationbar_menu);
+		menu.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(null != mEventListener) {
+					mEventListener.onMenu();
+				}
 			}
 		});
 		
@@ -73,7 +89,9 @@ public class NavigationBar {
 			
 			@Override
 			public void onClick(View v) {
-				mEventListener.onNewWebView();
+				if(null != mEventListener) {
+					mEventListener.onNewWebView();
+				}
 			}
 		});
 		
@@ -83,7 +101,9 @@ public class NavigationBar {
 			
 			@Override
 			public void onClick(View v) {
-				mEventListener.onSelectWebView();
+				if(null != mEventListener) {
+					mEventListener.onSelectWebView();
+				}
 			}
 		});
 	}

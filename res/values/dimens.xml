@@ -3,4 +3,7 @@
     <dimen name="addressbar_margin">4dp</dimen>
     <dimen name="progressbar_height">2dp</dimen>
     <dimen name="addressbar_height">35dp</dimen>
+    <dimen name="popmenu_margin">8dp</dimen>
+    <dimen name="popmenu_textSize">12sp</dimen>
+    <dimen name="popmenu_height">150dp</dimen>
 </resources>

@@ -187,6 +187,10 @@ public class WebViewSelecter implements View.OnTouchListener {
 		}
     }
     
+    public boolean isShow() {
+    	return null != mPopup;
+    }
+    
     public void show(View anchor) {
     	if(null == mPopup) {
     		Point screenSize = CommonUtil.screenSize(mContext);

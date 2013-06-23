@@ -4,5 +4,6 @@
     <color name="selectwebview_text_color">#99ccff</color>  
     <color name="bottom_spinner_color">#99ccff</color>
     <color name="addresssbar_spinner_color">#CCCCCC</color>
+    <color name="popmenu_text_color">@android:color/white</color>
     
 </resources>
