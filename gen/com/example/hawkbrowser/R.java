@@ -16,7 +16,9 @@ public final class R {
         public static final int selectwebview_text_color=0x7f040000;
     }
     public static final class dimen {
+        public static final int addressbar_height=0x7f050002;
         public static final int addressbar_margin=0x7f050000;
+        public static final int progressbar_height=0x7f050001;
     }
     public static final class drawable {
         public static final int addressbar_bg=0x7f020000;
@@ -44,32 +46,35 @@ public final class R {
         public static final int zxingscan=0x7f020016;
     }
     public static final class id {
-        public static final int addressbar_clearbtn=0x7f090003;
-        public static final int addressbar_edit=0x7f090002;
-        public static final int addressbar_gobtn=0x7f090005;
-        public static final int addressbar_spinner=0x7f090004;
-        public static final int bottom_spinner=0x7f090008;
-        public static final int layout_selectwebview=0x7f09000f;
-        public static final int layout_selectwebviewitem=0x7f090013;
-        public static final int layout_selectwebviewitem1=0x7f090010;
-        public static final int layout_selectwebviewitem2=0x7f090011;
-        public static final int layout_selectwebviewitem3=0x7f090012;
-        public static final int main_frame=0x7f090000;
-        public static final int mainframe_addressbar=0x7f090001;
-        public static final int mainframe_navigationbar=0x7f090009;
-        public static final int mainframe_progressbar=0x7f090006;
-        public static final int mainframe_webView=0x7f090007;
-        public static final int menu_goback=0x7f090016;
-        public static final int menu_goforward=0x7f090017;
-        public static final int menu_newwindow=0x7f090018;
-        public static final int menu_selectwindow=0x7f090019;
-        public static final int navigationbar_back=0x7f09000a;
-        public static final int navigationbar_forward=0x7f09000b;
-        public static final int navigationbar_home=0x7f09000d;
-        public static final int navigationbar_menu=0x7f09000c;
-        public static final int navigationbar_selectwindow=0x7f09000e;
-        public static final int selectwebviewitem_image=0x7f090015;
-        public static final int selectwebviewitem_title=0x7f090014;
+        public static final int addressbar_clearbtn=0x7f0a0003;
+        public static final int addressbar_edit=0x7f0a0002;
+        public static final int addressbar_gobtn=0x7f0a0005;
+        public static final int addressbar_spinner=0x7f0a0004;
+        public static final int bottom_spinner=0x7f0a0008;
+        public static final int layout_selectwebview=0x7f0a000f;
+        public static final int layout_selectwebviewitem=0x7f0a0013;
+        public static final int layout_selectwebviewitem1=0x7f0a0010;
+        public static final int layout_selectwebviewitem2=0x7f0a0011;
+        public static final int layout_selectwebviewitem3=0x7f0a0012;
+        public static final int main_frame=0x7f0a0000;
+        public static final int mainframe_addressbar=0x7f0a0001;
+        public static final int mainframe_navigationbar=0x7f0a0009;
+        public static final int mainframe_progressbar=0x7f0a0006;
+        public static final int mainframe_webView=0x7f0a0007;
+        public static final int menu_goback=0x7f0a0016;
+        public static final int menu_goforward=0x7f0a0017;
+        public static final int menu_newwindow=0x7f0a0018;
+        public static final int menu_selectwindow=0x7f0a0019;
+        public static final int navigationbar_back=0x7f0a000a;
+        public static final int navigationbar_forward=0x7f0a000b;
+        public static final int navigationbar_home=0x7f0a000d;
+        public static final int navigationbar_menu=0x7f0a000c;
+        public static final int navigationbar_selectwindow=0x7f0a000e;
+        public static final int selectwebviewitem_image=0x7f0a0015;
+        public static final int selectwebviewitem_title=0x7f0a0014;
+    }
+    public static final class integer {
+        public static final int progressbar_max=0x7f060000;
     }
     public static final class layout {
         public static final int main_frame=0x7f030000;
@@ -77,23 +82,23 @@ public final class R {
         public static final int select_webview_item=0x7f030002;
     }
     public static final class menu {
-        public static final int option_menu=0x7f080000;
+        public static final int option_menu=0x7f090000;
     }
     public static final class string {
-        public static final int addressbarhint=0x7f060008;
-        public static final int app_name=0x7f060000;
-        public static final int clear=0x7f06000b;
-        public static final int close=0x7f06000a;
-        public static final int defaultpagetitle=0x7f06000d;
-        public static final int go=0x7f060001;
-        public static final int goback=0x7f060002;
-        public static final int goforward=0x7f060003;
-        public static final int home=0x7f060006;
-        public static final int homepageurl=0x7f06000c;
-        public static final int menu=0x7f060005;
-        public static final int newwindow=0x7f060004;
-        public static final int selectwindow=0x7f060007;
-        public static final int webviewtitle=0x7f060009;
+        public static final int addressbarhint=0x7f070008;
+        public static final int app_name=0x7f070000;
+        public static final int clear=0x7f07000b;
+        public static final int close=0x7f07000a;
+        public static final int defaultpagetitle=0x7f07000d;
+        public static final int go=0x7f070001;
+        public static final int goback=0x7f070002;
+        public static final int goforward=0x7f070003;
+        public static final int home=0x7f070006;
+        public static final int homepageurl=0x7f07000c;
+        public static final int menu=0x7f070005;
+        public static final int newwindow=0x7f070004;
+        public static final int selectwindow=0x7f070007;
+        public static final int webviewtitle=0x7f070009;
     }
     public static final class style {
         /** 
@@ -117,10 +122,10 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f080000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f080001;
     }
 }

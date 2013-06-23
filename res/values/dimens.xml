@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="addressbar_margin">4dp</dimen>
+    <dimen name="progressbar_height">2dp</dimen>
+    <dimen name="addressbar_height">35dp</dimen>
 </resources>

@@ -250,17 +250,25 @@ public final class HawkBrowser extends Activity
 	@Override
 	public void onProgressChanged(WebView view, int newProgress) {
 		mProgressBar.setProgress(newProgress);
+		
+		final int MAX_PROGRESS = 100;
+		
+		if(MAX_PROGRESS == newProgress) {
+			mProgressBar.setVisibility(View.GONE);
+		}
 	}
 	// WebChromeClient Listener end
 	
 	// WebViewClient Listener start
 	@Override
 	public void onPageFinished(WebView view, String url) {
+		mProgressBar.setVisibility(View.GONE);
 		setBackForwardState(view);
 	}
 	
 	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		mProgressBar.setVisibility(View.VISIBLE);
 		setBackForwardState(view);
 	}
 	// WebViewClient Listener end

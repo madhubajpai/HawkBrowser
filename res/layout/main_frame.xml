@@ -9,7 +9,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mainframe_addressbar"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="@dimen/addressbar_height"
         android:background="@drawable/addressbar_bg"
         android:orientation="horizontal" >
 
@@ -65,11 +65,10 @@
          android:id="@+id/mainframe_progressbar"
          style="?android:attr/progressBarStyleHorizontal"
          android:layout_width="match_parent"
-         android:layout_height="5dp"
-         android:background="@drawable/progress_background"
-         android:max="100"
-         android:progress="10"
-         android:progressDrawable="@drawable/progressbar" />
+         android:layout_height="@dimen/progressbar_height"
+         android:max="@integer/progressbar_max"
+         android:visibility="gone"
+         />
     
     <com.example.hawkbrowser.core.HawkWebView
         android:id="@+id/mainframe_webView"
