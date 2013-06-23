@@ -32,7 +32,9 @@ import android.widget.Toast;
 
 public final class HawkBrowser extends Activity 
 	implements NavigationBar.EventListener,
-		HawkWebViewClient.EventListener, HawkWebChromeClient.EventListener {
+		HawkWebViewClient.EventListener, 
+		HawkWebChromeClient.EventListener,
+		PopMenuBar.EventListener {
 
 	private ArrayList<HawkWebView> 	mViews;
 	private HawkWebView 			mCurrentView;
@@ -244,7 +246,7 @@ public final class HawkBrowser extends Activity
 	@Override
 	public void onMenu() {
 		if(null == mPopMenuBar) {
-			mPopMenuBar = new PopMenuBar(this);
+			mPopMenuBar = new PopMenuBar(this, this);
 			View anchor = findViewById(R.id.navigationbar_menu);
 			mPopMenuBar.show(anchor);
 		} else {
@@ -291,6 +293,23 @@ public final class HawkBrowser extends Activity
 		setBackForwardState(view);
 	}
 	// WebViewClient Listener end
+	
+	// PopMenuBar Listener begin
+	@Override
+	public void onQuit() {
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+		
+		finish();
+	}
+	
+	public void onRefresh() {
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+		
+		mCurrentView.reload();
+	}
+	// PopMenuBar Listener end
 
 	@SuppressLint("NewApi")
 	private void setBackForwardState(WebView view) {

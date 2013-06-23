@@ -32,7 +32,6 @@
             android:layout_weight="1"
             android:background="@drawable/popmenu_button_bg"
             android:drawableTop="@drawable/pop_menu_add_bookmark"
-            android:enabled="false"
             android:text="@string/popmenu_addbookmark"
             android:textColor="@color/popmenu_text_color"
             android:textSize="@dimen/popmenu_textSize" />
@@ -44,7 +43,6 @@
             android:layout_weight="1"
             android:background="@drawable/popmenu_button_bg"
             android:drawableTop="@drawable/pop_menu_refresh"
-            android:enabled="false"
             android:text="@string/popmenu_refresh"
             android:textColor="@color/popmenu_text_color"
             android:textSize="@dimen/popmenu_textSize" />

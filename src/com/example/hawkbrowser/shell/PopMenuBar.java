@@ -16,11 +16,27 @@ public class PopMenuBar {
 	private Context mContext;
 	private ViewGroup mView;
 	private PopupWindow mPopup;
+	private EventListener mListener;
+	
+	public interface EventListener {
+		void onQuit();
+		void onRefresh();	
+	}	
 	
 	public PopMenuBar(Context context) {
 		mContext = context;
 		
 		init();
+	}
+	
+	public PopMenuBar(Context context, EventListener listener) {
+		this(context);
+		
+		mListener = listener;
+	}
+		
+	public void setEventListener(EventListener listener) {
+		mListener = listener;
 	}
 	
 	private void init() {
@@ -29,6 +45,46 @@ public class PopMenuBar {
 			mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		mView = (ViewGroup) li.inflate(R.layout.pop_menu, null);
+		
+		View bmHis = mView.findViewById(R.id.popmenu_bokmarkhistory);
+		bmHis.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			}
+		});
+		
+		View addBm = mView.findViewById(R.id.popmenu_addbookmark);
+		addBm.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		View refresh = mView.findViewById(R.id.popmenu_refresh);
+		refresh.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(null != mListener) {
+					mListener.onRefresh();
+				}
+			}
+		});
+		
+		View quit = mView.findViewById(R.id.popmenu_exit);
+		quit.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(null != mListener) {
+					mListener.onQuit();
+				}
+			}
+		});
 	}
 	
     public void show(View anchor) {
