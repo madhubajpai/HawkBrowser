@@ -1,8 +1,8 @@
-package com.example.hawkbrowser.shell;
+package com.hawkbrowser.shell;
 
 import java.util.ArrayList;
-import com.example.hawkbrowser.R;
-import com.example.hawkbrowser.util.CommonUtil;
+import com.hawkbrowser.R;
+import com.hawkbrowser.util.CommonUtil;
 
 import android.content.Context;
 import android.graphics.Bitmap;

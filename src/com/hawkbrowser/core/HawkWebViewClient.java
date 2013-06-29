@@ -1,4 +1,4 @@
-package com.example.hawkbrowser.core;
+package com.hawkbrowser.core;
 
 import android.graphics.Bitmap;
 import android.webkit.WebViewClient;

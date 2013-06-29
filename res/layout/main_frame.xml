@@ -70,7 +70,7 @@
          android:visibility="gone"
          />
     
-    <com.example.hawkbrowser.core.HawkWebView
+    <com.hawkbrowser.core.HawkWebView
         android:id="@+id/mainframe_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

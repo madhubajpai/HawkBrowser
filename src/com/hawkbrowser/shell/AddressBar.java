@@ -1,6 +1,6 @@
-package com.example.hawkbrowser.shell;
+package com.hawkbrowser.shell;
 
-import com.example.hawkbrowser.R;
+import com.hawkbrowser.R;
 
 import android.content.Context;
 import android.content.res.Resources;

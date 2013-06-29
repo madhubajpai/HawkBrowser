@@ -1,10 +1,10 @@
-package com.example.hawkbrowser.shell;
+package com.hawkbrowser.shell;
 
 import java.util.ArrayList;
 
-import com.example.hawkbrowser.R;
-import com.example.hawkbrowser.core.*;
-import com.example.hawkbrowser.util.*;
+import com.hawkbrowser.R;
+import com.hawkbrowser.core.*;
+import com.hawkbrowser.util.*;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

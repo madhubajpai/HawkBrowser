@@ -1,4 +1,4 @@
-package com.example.hawkbrowser.util;
+package com.hawkbrowser.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
