@@ -21,6 +21,8 @@ public class PopMenuBar {
 	public interface EventListener {
 		void onQuit();
 		void onRefresh();	
+		void onAddBookmark();
+		void onShowBookmark();
 	}	
 	
 	public PopMenuBar(Context context) {
@@ -51,6 +53,9 @@ public class PopMenuBar {
 			
 			@Override
 			public void onClick(View v) {
+				if(null != mListener) {
+					mListener.onShowBookmark();
+				}
 			}
 		});
 		
@@ -59,8 +64,9 @@ public class PopMenuBar {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				if(null != mListener) {
+					// mListener.onAddBookmark();
+				}
 			}
 		});
 		

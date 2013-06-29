@@ -3,11 +3,14 @@ package com.hawkbrowser.shell;
 import java.util.ArrayList;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.app.Bookmark;
+import com.hawkbrowser.app.BookmarkActivity;
 import com.hawkbrowser.core.*;
 import com.hawkbrowser.util.*;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -308,6 +311,21 @@ public final class HawkBrowser extends Activity
 		mPopMenuBar = null;
 		
 		mCurrentView.reload();
+	}
+	
+	public void onAddBookmark() {
+		Bookmark bm = new Bookmark();
+		Bookmark.Item item = new Bookmark.Item(mCurrentView.getTitle(), 
+				mCurrentView.getUrl(), Bookmark.Type.Link);
+		bm.Add(item);
+	}
+	
+	public void onShowBookmark() {
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+		
+		Intent intent = new Intent(this, BookmarkActivity.class);
+		startActivity(intent);
 	}
 	// PopMenuBar Listener end
 
