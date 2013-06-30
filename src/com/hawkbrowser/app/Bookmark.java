@@ -6,8 +6,13 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.util.Log;
 
 import com.hawkbrowser.base.Tree;
+import com.hawkbrowser.util.CommonUtil;
 
 
 public class Bookmark {
@@ -37,6 +42,10 @@ public class Bookmark {
 		}
 		
 		public boolean equals(Object obj) {
+			if(null == obj) {
+				return false;
+			}
+			
 			if(!(obj instanceof Item)) {
 				return false;
 			}
@@ -49,6 +58,17 @@ public class Bookmark {
 			return mId;
 		}
 	
+		public String title() {
+			return mName;
+		}
+		
+		public String url() {
+			return mUrl;
+		}
+		
+		public Type type() {
+			return mType;
+		}
 	}
 	
 	public Bookmark() {
@@ -57,19 +77,44 @@ public class Bookmark {
 		Load();
 	}
 	
-	public void Add(Item item) {
+	public List<Item> getChildren(Item parent) {
+		
+		Tree.Node<Item> node = mTree.find(parent);
+		
+		if(null == node) {
+			return new ArrayList<Item>();
+		}
+		
+		ArrayList<Item> items = new ArrayList<Item>();
+		
+		for(Tree.Node<Item> child : node.children()) {
+			items.add(child.data());
+		}
+		
+		return items;
+	}
+	
+	public boolean Add(Item item) {
 		Tree.Node<Item> parent = mTree.find(item, 
 				new Tree.FindMatcher() {
 					@Override
 					public boolean isMatch(Object l, Object r) {
-						Item li = (Item)l;
-						Item ri = (Item)r;
-						return (Type.Folder == li.mType) 
+						if((null == l) || (null == r)) {
+							return true;
+						}
+						
+						if((null != l) && (null != r)) {
+							Item li = (Item)l;
+							Item ri = (Item)r;
+							return (Type.Folder == li.mType) 
 								&& (li.mName == ri.mFolderName);
+						}
+						
+						return false;
 					}
 				});
 		
-		mTree.add(parent, item);
+		return mTree.add(parent, item);
 	}
 	
 	private void Load() {
@@ -83,6 +128,8 @@ public class Bookmark {
 					new FileInputStream(BOOKMARK_FILE_NAME));
 			Item item = (Item) inputStream.readObject();
 			item.mId = ++mCurrentId;
+			Log.d("Bookmark", 
+					String.format("Read Bookmark: %s", item.title()));
 			Add(item);
 		} catch(Exception e) {
 			
@@ -107,7 +154,7 @@ public class Bookmark {
 				mOutStream = new ObjectOutputStream(
 						new FileOutputStream(BOOKMARK_FILE_NAME));
 			} catch(Exception e) {
-				
+				Log.e("Bookmark", e.getMessage());				
 			} finally {
 				if(null != mOutStream) {
 					try {
@@ -132,8 +179,10 @@ public class Bookmark {
 			try {
 				Item item = (Item)l;
 				outStream.writeObject(item);
+				Log.d("Bookmark", 
+					String.format("Serialize Bookmark: %s", item.title()));
 			} catch(Exception e) {
-				
+				Log.e("Bookmark", e.getMessage());
 			} finally {
 				if(null != outStream) {
 					try {
@@ -147,7 +196,7 @@ public class Bookmark {
 		}
 	}
 	
-	private void Flush() {
+	public void Flush() {
 		BookmarkTreeSerializer ts = new BookmarkTreeSerializer();
 		ObjectOutputStream outStream = ts.getStream();
 		

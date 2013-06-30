@@ -3,6 +3,8 @@ package com.hawkbrowser.base;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 public class Tree<T> {
 	
 	private Node<T> mRoot;
@@ -35,6 +37,14 @@ public class Tree<T> {
 			mParent = parent;
 			mChildren = null;
 		}
+		
+		public List<Node<T>> children() {
+			return mChildren;
+		}
+		
+		public T data() {
+			return mData;
+		}
 	}
 	
 	public Node<T> find(T data) {
@@ -47,11 +57,13 @@ public class Tree<T> {
 		}
 	}
 	
-	public void iterate(Node<T> node, Object arg, Iterator iter) {
+	public void iterate(Node<T> node, Object arg, Iterator iter) {	
 		iter.iterate(node.mData, arg);
 				
-		for(Node<T> child : node.mChildren) {
-			iterate(child, arg, iter);
+		if(null != node.mChildren) {
+			for(Node<T> child : node.mChildren) {
+				iterate(child, arg, iter);
+			}
 		}
 	}
 	
@@ -102,14 +114,16 @@ public class Tree<T> {
 	}
 		
 	private Node<T> find(Node<T> node, T data) {
-		
-		if(node.mData.equals(data)) {
+				
+		if((null != node.mData) && node.mData.equals(data)) {
 			return node;
 		}
 		
-		for(Node<T> child : node.mChildren) {
-			if(null != find(child, data)) {
-				return child;
+		if(null != node.mChildren) {
+			for(Node<T> child : node.mChildren) {
+				if(null != find(child, data)) {
+					return child;
+				}
 			}
 		}
 		

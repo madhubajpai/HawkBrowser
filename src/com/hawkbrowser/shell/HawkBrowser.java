@@ -314,10 +314,18 @@ public final class HawkBrowser extends Activity
 	}
 	
 	public void onAddBookmark() {
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+		
 		Bookmark bm = new Bookmark();
 		Bookmark.Item item = new Bookmark.Item(mCurrentView.getTitle(), 
 				mCurrentView.getUrl(), Bookmark.Type.Link);
-		bm.Add(item);
+		
+		if(!bm.Add(item)) {
+			CommonUtil.showTips(this, R.string.bookmark_exist);
+		}
+		
+		bm.Flush();
 	}
 	
 	public void onShowBookmark() {

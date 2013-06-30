@@ -65,7 +65,7 @@ public class PopMenuBar {
 			@Override
 			public void onClick(View v) {
 				if(null != mListener) {
-					// mListener.onAddBookmark();
+					mListener.onAddBookmark();
 				}
 			}
 		});

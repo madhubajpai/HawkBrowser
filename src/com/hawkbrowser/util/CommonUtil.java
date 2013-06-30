@@ -2,6 +2,7 @@ package com.hawkbrowser.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
@@ -13,6 +14,13 @@ public class CommonUtil {
 		int duration = Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(ctx, msg, duration);
 		toast.show();
+	}
+	
+	public static void showTips(Context ctx, int msgStringId) {
+		
+		Resources rc = ctx.getResources();
+		String msg = rc.getString(msgStringId);
+		showTips(ctx, msg);
 	}
 	
 	@SuppressLint("NewApi")
