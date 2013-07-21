@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -317,9 +318,11 @@ public final class HawkBrowser extends Activity
 		mPopMenuBar.dismiss();
 		mPopMenuBar = null;
 		
-		Bookmark bm = new Bookmark();
+		Bookmark bm = new Bookmark(this);
 		Bookmark.Item item = new Bookmark.Item(mCurrentView.getTitle(), 
 				mCurrentView.getUrl(), Bookmark.Type.Link);
+		
+		Log.d("Bookmark", String.format("onAddBookmark: %s", item.toString()));
 		
 		if(!bm.Add(item)) {
 			CommonUtil.showTips(this, R.string.bookmark_exist);

@@ -5,10 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.hawkbrowser.base.Tree;
@@ -21,6 +24,7 @@ public class Bookmark {
 	
 	private Tree<Item> mTree;
 	private int mCurrentId;
+	private Context mContext;
 	
 	public static enum Type {
 		Folder, Link
@@ -51,7 +55,11 @@ public class Bookmark {
 			}
 			
 			Item r = (Item) obj;
-			return mId == r.mId;
+			
+			Log.d("Bookmark", String.format("this: %s; right: %s",
+					toString(), obj.toString()));
+			
+			return mUrl.equals(r.mUrl);
 		}
 		
 		public int hashCode() {
@@ -69,26 +77,42 @@ public class Bookmark {
 		public Type type() {
 			return mType;
 		}
+		
+		public int id() {
+			return mId;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("id: %d, type: %s, name: %s, " +
+				"folderName: %s, url %s", mId, mType, mName, mFolderName, mUrl
+				);
+		}
 	}
 	
-	public Bookmark() {
+	public Bookmark(Context context) {
 		mCurrentId = 0;
+		mContext = context;
 	
 		Load();
 	}
 	
 	public List<Item> getChildren(Item parent) {
 		
-		Tree.Node<Item> node = mTree.find(parent);
+		Tree.Node<Item> node = null;
 		
-		if(null == node) {
-			return new ArrayList<Item>();
+		if(null == parent) {
+			node = mTree.root();
+		} else {
+			node = mTree.find(parent);
 		}
-		
+			
 		ArrayList<Item> items = new ArrayList<Item>();
 		
-		for(Tree.Node<Item> child : node.children()) {
-			items.add(child.data());
+		if((null != node) && (null != node.children())) {
+			for(Tree.Node<Item> child : node.children()) {
+				items.add(child.data());
+			}
 		}
 		
 		return items;
@@ -99,7 +123,7 @@ public class Bookmark {
 				new Tree.FindMatcher() {
 					@Override
 					public boolean isMatch(Object l, Object r) {
-						if((null == l) || (null == r)) {
+						if((null == l) && (null == r)) {
 							return true;
 						}
 						
@@ -121,49 +145,76 @@ public class Bookmark {
 		
 		mTree = new Tree<Item>(null);
 		
-		ObjectInputStream inputStream = null;
+		FileInputStream fileInputStream = null;
+		ObjectInputStream objInputStream = null;
 		
 		try {
-			inputStream = new ObjectInputStream(
-					new FileInputStream(BOOKMARK_FILE_NAME));
-			Item item = (Item) inputStream.readObject();
-			item.mId = ++mCurrentId;
-			Log.d("Bookmark", 
-					String.format("Read Bookmark: %s", item.title()));
-			Add(item);
-		} catch(Exception e) {
+			File file = new File(mContext.getFilesDir(), BOOKMARK_FILE_NAME);
 			
-		} finally {
-			if(null != inputStream) {
-				try {
-					inputStream.close();
-					inputStream = null;
-				} catch(Exception e) {
+			if(file.isFile()) {
+				fileInputStream = new FileInputStream(file);
+				objInputStream = new ObjectInputStream(fileInputStream);
+				
+				do {
+					Item item = (Item) objInputStream.readObject();
 					
-				}
+					if(null != item) {
+						item.mId = ++mCurrentId;
+						Log.d("Bookmark", 
+								String.format("Read Bookmark: %s", item.toString()));
+						Add(item);
+					} else {
+						break;
+					}
+				} while(true);
 			}
-		}
+		} catch(Exception e) {
+
+			Log.e("Bookmark", CommonUtil.getExceptionStackTrace(e));
+			
+			try {
+				if(null != objInputStream) {
+					objInputStream.close();
+					objInputStream = null;
+					fileInputStream = null;
+				} else if(null != fileInputStream) {
+					fileInputStream.close();
+					fileInputStream = null;
+				}
+			} catch(Exception eInner) {
+				
+			}
+		} 
 	}
 	
 	class BookmarkTreeSerializer implements Tree.Iterator {
 		
 		private ObjectOutputStream mOutStream = null;
+		private FileOutputStream mFileOutStream = null;
 		
 		public BookmarkTreeSerializer() {
 			try {
-				mOutStream = new ObjectOutputStream(
-						new FileOutputStream(BOOKMARK_FILE_NAME));
+				File file = new File(mContext.getFilesDir(), 
+						BOOKMARK_FILE_NAME);
+				mFileOutStream = new FileOutputStream(file);
+				mOutStream = new ObjectOutputStream(mFileOutStream);
 			} catch(Exception e) {
-				Log.e("Bookmark", e.getMessage());				
-			} finally {
+				Log.e("Bookmark", CommonUtil.getExceptionStackTrace(e));
+			} 
+		}
+		
+		public void finalize() {
+			try {
 				if(null != mOutStream) {
-					try {
-						mOutStream.close();
-						mOutStream = null;
-					} catch(Exception e) {
-						
-					}
+					mOutStream.close();
+					mOutStream = null;
+					mFileOutStream = null;
+				} else if(null != mFileOutStream) {
+					mFileOutStream.close();
+					mFileOutStream = null;
 				}
+			} catch(Exception e) {
+				
 			}
 		}
 		
@@ -178,21 +229,15 @@ public class Bookmark {
 			
 			try {
 				Item item = (Item)l;
-				outStream.writeObject(item);
-				Log.d("Bookmark", 
-					String.format("Serialize Bookmark: %s", item.title()));
-			} catch(Exception e) {
-				Log.e("Bookmark", e.getMessage());
-			} finally {
-				if(null != outStream) {
-					try {
-						outStream.close();
-						outStream = null;
-					} catch(Exception e) {
-						
-					}
+				
+				if(null != item) {
+					outStream.writeObject(item);
+					Log.d("Bookmark", 
+						String.format("Serialize Bookmark: %s", item.toString()));
 				}
-			}
+			} catch(Exception e) {
+				Log.e("Bookmark", CommonUtil.getExceptionStackTrace(e));
+			} 
 		}
 	}
 	

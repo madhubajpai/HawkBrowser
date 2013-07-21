@@ -1,9 +1,13 @@
 package com.hawkbrowser.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -21,6 +25,12 @@ public class CommonUtil {
 		Resources rc = ctx.getResources();
 		String msg = rc.getString(msgStringId);
 		showTips(ctx, msg);
+	}
+	
+	public static String getExceptionStackTrace(Exception e) {
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		return sw.toString();
 	}
 	
 	@SuppressLint("NewApi")

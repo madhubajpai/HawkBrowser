@@ -3,16 +3,16 @@ package com.hawkbrowser.app;
 import java.util.List;
 
 import com.hawkbrowser.R;
-import com.hawkbrowser.util.CommonUtil;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -29,30 +29,54 @@ public class BookmarkActivity extends Activity {
 	private TabWidget mTabWidget;
 	private Bookmark mBookmark;
 	
-	class BookmarkArrayAdapter extends ArrayAdapter<Bookmark.Item> {
+	class BookmarkArrayAdapter extends BaseAdapter {
 		
 		private List<Bookmark.Item> mItems;
 		private LayoutInflater mInflater;
 		
-		public BookmarkArrayAdapter(Context context, int resource, 
-				int textViewResourceId, List<Bookmark.Item> items) {
-			
-			super(context, resource, textViewResourceId);
-			
+		public BookmarkArrayAdapter(Context context, 
+				List<Bookmark.Item> items) {
+					
+			mItems = items;
 			mInflater = (LayoutInflater) 
-				context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+				context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+		
+		@Override
+		public int getCount() {
+			return mItems.size();
+		}
+		
+		@Override
+		public Object getItem(int position) {
+			if(position > 0 && position < mItems.size()) {
+				return mItems.get(position);
+			}
+			
+			return null;
+		}
+		
+		@Override
+		public long getItemId(int position) {
+			if(position > 0 && position < mItems.size()) {
+				return mItems.get(position).id();
+			}
+			
+			return 0;
 		}
 		
 		@Override
 		public View getView(int position, 
 				View convertView, ViewGroup parent) {
 			
+			Log.d("Bookmark", String.format("getView: %d", position));
+			
 			if(null != convertView) {
 				return convertView;
 			}
-			
+					
 			ViewGroup itemView = (ViewGroup) 
-				mInflater.inflate(R.layout.bookmark_list_item, parent);
+				mInflater.inflate(R.layout.bookmark_list_item, null);
 			
 			Bookmark.Item bi = mItems.get(position);
 			String name = null;
@@ -65,6 +89,9 @@ public class BookmarkActivity extends Activity {
 			} else {
 				name = bi.title() + "\n" + bi.url();
 			}
+			
+			Log.d("Bookmark", 
+				String.format("getView, item name: %s", name));
 			
 			TextView titleView = (TextView) 
 					itemView.findViewById(R.id.bookmark_list_item_title);
@@ -103,11 +130,12 @@ public class BookmarkActivity extends Activity {
 	}
 	
 	private void loadBookmark() {
-		mBookmark = new Bookmark();
+		mBookmark = new Bookmark(this);
 		List<Bookmark.Item> items = mBookmark.getChildren(null);
 		
-		BookmarkArrayAdapter adapter = new BookmarkArrayAdapter(this, 
-			R.layout.bookmark_list_item, R.id.bookmark_list_item_title, items);
+		Log.d("Bookmark", String.format("bookmarks count: %d", items.size()));
+		
+		BookmarkArrayAdapter adapter = new BookmarkArrayAdapter(this, items);
 				
 		ListView listView = (ListView)
 			mTabHost.findViewById(R.id.bookmarkhistory_bookmark);

@@ -47,6 +47,10 @@ public class Tree<T> {
 		}
 	}
 	
+	public Node<T> root() {
+		return mRoot;
+	}
+	
 	public Node<T> find(T data) {
 		return find(mRoot, data);
 	}
@@ -72,7 +76,12 @@ public class Tree<T> {
 	}
 	
 	public boolean add(Node<T> parent, T data) {
-		if(null == data || null == find(data)) {
+		
+		Log.d("Tree", String.format("parent is %s; data is %s", 
+			null == parent ? "null" : parent.toString(), 
+			null == data ? "null" : data.toString()));
+		
+		if(null == data || null != find(data)) {
 			return false;
 		}
 		
@@ -83,6 +92,8 @@ public class Tree<T> {
 		if(null == parent.mChildren) {
 			parent.mChildren = new ArrayList<Node<T>>();
 		}
+		
+		Log.d("Tree", String.format("add data: %s", data.toString()));
 		
 		parent.mChildren.add(new Node<T>(data));
 		
@@ -104,9 +115,11 @@ public class Tree<T> {
 			return node;
 		}
 		
-		for(Node<T> child : node.mChildren) {
-			if(null != find(child, data, matcher)) {
-				return child;
+		if(null != node.mChildren) {
+			for(Node<T> child : node.mChildren) {
+				if(null != find(child, data, matcher)) {
+					return child;
+				}
 			}
 		}
 		
