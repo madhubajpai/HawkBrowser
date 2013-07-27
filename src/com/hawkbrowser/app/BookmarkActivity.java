@@ -5,16 +5,12 @@ import java.util.List;
 import com.hawkbrowser.R;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -30,78 +26,6 @@ public class BookmarkActivity extends Activity {
 	private TabWidget mTabWidget;
 	private Bookmark mBookmark;
 	
-	class BookmarkArrayAdapter extends BaseAdapter {
-		
-		private List<Bookmark.Item> mItems;
-		private LayoutInflater mInflater;
-		
-		public BookmarkArrayAdapter(Context context, 
-				List<Bookmark.Item> items) {
-					
-			mItems = items;
-			mInflater = (LayoutInflater) 
-				context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-		
-		@Override
-		public int getCount() {
-			return mItems.size();
-		}
-		
-		@Override
-		public Object getItem(int position) {
-			if(position > 0 && position < mItems.size()) {
-				return mItems.get(position);
-			}
-			
-			return null;
-		}
-		
-		@Override
-		public long getItemId(int position) {
-			if(position > 0 && position < mItems.size()) {
-				return mItems.get(position).id();
-			}
-			
-			return 0;
-		}
-		
-		@Override
-		public View getView(int position, 
-				View convertView, ViewGroup parent) {
-			
-			Log.d("Bookmark", String.format("getView: %d", position));
-			
-			if(null != convertView) {
-				return convertView;
-			}
-					
-			ViewGroup itemView = (ViewGroup) 
-				mInflater.inflate(R.layout.bookmark_list_item, null);
-			
-			Bookmark.Item bi = mItems.get(position);
-			String name = null;
-			
-			if(bi.type() == Bookmark.Type.Folder) {
-				ImageView icon = (ImageView)
-					itemView.findViewById(R.id.bookmark_list_item_icon);
-				icon.setImageResource(R.drawable.icon_folder);
-				name = bi.title();
-			} else {
-				name = bi.title() + "\n" + bi.url();
-			}
-			
-			Log.d("Bookmark", 
-				String.format("getView, item name: %s", name));
-			
-			TextView titleView = (TextView) 
-					itemView.findViewById(R.id.bookmark_list_item_title);
-			titleView.setText(name);
-			
-			return itemView;
-		}
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -109,6 +33,7 @@ public class BookmarkActivity extends Activity {
 		setContentView(R.layout.bookmark_history);
 		
 		initLayout();
+		setupListeners();
 		loadBookmark();
 	}
 	
@@ -129,9 +54,12 @@ public class BookmarkActivity extends Activity {
 		tabHistory.setContent(R.id.bookmarkhistory_history);
 		tabHistory.setIndicator(vh);
 		mTabHost.addTab(tabHistory);
+	}
+	
+	private void setupListeners() {
 		
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-					
+			
 			@Override
 			public void onTabChanged(String tabId) {
 				
@@ -150,6 +78,15 @@ public class BookmarkActivity extends Activity {
 			}
 		});
 		
+		View back = mTabHost.findViewById(R.id.bookmarkhistory_return);
+		back.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				finish();
+			}
+		});
 	}
 	
 	private View getCustomTab(String title, boolean isSelectable) {
