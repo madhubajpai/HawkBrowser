@@ -319,6 +319,11 @@ public final class HawkBrowser extends Activity
 		mPopMenuBar = null;
 		
 		Bookmark bm = new Bookmark(this);
+		String title = mCurrentView.getTitle();
+		if(null == title || title.isEmpty()) {
+			title = getResources().getString(R.string.defaultpagetitle);
+		}
+		
 		Bookmark.Item item = new Bookmark.Item(mCurrentView.getTitle(), 
 				mCurrentView.getUrl(), Bookmark.Type.Link);
 		

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,18 +116,56 @@ public class BookmarkActivity extends Activity {
 		mTabHost = (TabHost) findViewById(android.R.id.tabhost);
 		mTabHost.setup();
 		mTabWidget = mTabHost.getTabWidget();
-		
-		Resources rc = getResources();
-		
+				
 		TabSpec tabBookmark = mTabHost.newTabSpec(BOOKMARK_TAB_ID);
 		tabBookmark.setContent(R.id.bookmarkhistory_bookmark);
-		tabBookmark.setIndicator(rc.getString(R.string.bookmark));
+		Resources rc = getResources();
+		View vb = getCustomTab(rc.getString(R.string.bookmark), true);
+		tabBookmark.setIndicator(vb);
 		mTabHost.addTab(tabBookmark);
 
 		TabSpec tabHistory = mTabHost.newTabSpec(HISTORY_TAB_ID);
+		View vh = getCustomTab(rc.getString(R.string.history), false);
 		tabHistory.setContent(R.id.bookmarkhistory_history);
-		tabHistory.setIndicator(rc.getString(R.string.history));
+		tabHistory.setIndicator(vh);
 		mTabHost.addTab(tabHistory);
+		
+		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+					
+			@Override
+			public void onTabChanged(String tabId) {
+				
+				Log.d("Bookmark", String.format("Click tab  %s", tabId));
+				
+				for(int i = 0; i < mTabWidget.getChildCount(); ++i) {
+					ViewGroup twChild = (ViewGroup) mTabWidget.getChildAt(i);
+					View lineView = twChild.findViewById(
+						R.id.bookmark_custom_tab_line);
+					if(i != mTabHost.getCurrentTab()) {
+						lineView.setVisibility(View.INVISIBLE);
+					} else {
+						lineView.setVisibility(View.VISIBLE);
+					}
+				}					
+			}
+		});
+		
+	}
+	
+	private View getCustomTab(String title, boolean isSelectable) {
+		ViewGroup vg = (ViewGroup) LayoutInflater.from(this).inflate(
+			R.layout.bookmark_custom_tab, null);
+		
+		TextView titleView = (TextView)
+			vg.findViewById(R.id.bookmark_custom_tab_title);
+		titleView.setText(title);
+		
+		if(!isSelectable) {
+			View lineView = vg.findViewById(R.id.bookmark_custom_tab_line);
+			lineView.setVisibility(View.INVISIBLE);
+		}
+		
+		return vg;
 	}
 	
 	private void loadBookmark() {

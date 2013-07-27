@@ -30,5 +30,6 @@ public class HawkWebView extends WebView {
 		getSettings().setJavaScriptEnabled(true);
 		setWebViewClient(viewClient);
 		setWebChromeClient(chromeClient);
+		requestFocusFromTouch();
 	}
 }

@@ -25,8 +25,8 @@
     <string name="management">管理</string>
     <string name="sync">同步</string>
     <string name="bookmark_back">返回</string>
-    <string name="bookmark">书签</string>
-    <string name="history">历史</string>
+    <string name="bookmark">书    签</string>
+    <string name="history">历    史</string>
     <string name="bookmark_exist">书签已存在</string>
 
 </resources>
