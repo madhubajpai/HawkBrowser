@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.text.format.Time;
+import android.util.Log;
 
 public class HistorySQLStorage implements HistoryStorage {
 
@@ -27,6 +28,7 @@ public class HistorySQLStorage implements HistoryStorage {
 		AsyncTask<HistorySQLStorage, Void, HistorySQLStorage> {
 			
 		protected void onPostExecute(HistorySQLStorage storage) {
+			Log.d("History", "getWritableDatabase onPostExecute");
 			mIsDBOpened.set(true);
 			storage.runPendingTasks();
 		}
@@ -34,6 +36,7 @@ public class HistorySQLStorage implements HistoryStorage {
 		@Override
 		protected HistorySQLStorage doInBackground(HistorySQLStorage... params) {
 			
+			Log.d("History", "getWritableDatabase");
 			params[0].mDB = params[0].mDBHelper.getWritableDatabase();
 			return params[0];
 		}
@@ -108,9 +111,11 @@ public class HistorySQLStorage implements HistoryStorage {
 	
 	private void internalSaveItem(History.Item item) {
 		
-		if(null != item) {
+		if(null == item) {
 			return;
 		}
+		
+		Log.d("History", String.format("SaveItem: %s", item.toString()));
 		
 		ContentValues values = new ContentValues();
 		values.put(HistoryDBHelper.COLUMN_NAME_TIME, 
@@ -141,30 +146,38 @@ public class HistorySQLStorage implements HistoryStorage {
 		
 		String where = HistoryDBHelper.COLUMN_NAME_TIME + " >= ? and " 
 				+ HistoryDBHelper.COLUMN_NAME_TIME + " <= ?";
-		String[] whereArgs = { String.format("%ld", from.toMillis(false)), 
-				String.format("%ld", to.toMillis(false)) };
-		String sortOrder = HistoryDBHelper.COLUMN_NAME_TIME + "DESC";
+		String[] whereArgs = { String.format("%d", from.toMillis(false)), 
+				String.format("%d", to.toMillis(false)) };
+		String sortOrder = HistoryDBHelper.COLUMN_NAME_TIME + " DESC";
 		
 		Cursor c = mDB.query(HistoryDBHelper.TABLE_NAME_HISTORY, projection, 
 				where, whereArgs, null, null, sortOrder);	
 		c.moveToFirst();
 		
 		ArrayList<History.Item> results = new ArrayList<History.Item>();
+				
+		Log.d("History", 
+				String.format("row count: %d", c.getCount()));
 		
-		do {
-			long ms = c.getLong(
-				c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_TIME));
-			String title = c.getString(
-				c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_TITLE));
-			String url = c.getString(
-				c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_URL));
-			Time time = new Time();
-			time.set(ms);
-			
-			History.Item item = new History.Item(title, url, time);
-			results.add(new History.Item(title, url, time));
-			
-		} while(c.moveToNext());
+		if(c.getCount() > 0) {
+			do {
+				long ms = c.getLong(
+					c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_TIME));
+				String title = c.getString(
+					c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_TITLE));
+				String url = c.getString(
+					c.getColumnIndex(HistoryDBHelper.COLUMN_NAME_URL));
+				Time time = new Time();
+				time.set(ms);
+				
+				History.Item item = new History.Item(title, url, time);
+				results.add(new History.Item(title, url, time));
+				
+				Log.d("History", 
+					String.format("ReadItem: %s", item.toString()));
+				
+			} while(c.moveToNext());
+		}
 		
 		c.close();
 		

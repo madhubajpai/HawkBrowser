@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.text.format.Time;
+import android.util.Log;
 
 public class History implements HistoryStorageListener {
 
@@ -32,24 +33,95 @@ public class History implements HistoryStorageListener {
 		public Time time() {
 			return mTime;
 		}
+		
+		@Override
+		public String toString() {
+			return String.format("%s;%s;%s", mTime.toString(), mTitle, mUrl);
+		}
 	}
-			
+				
 	public History(Context context) {
 		mContext = context;
 		mStorage = new HistorySQLStorage(context, this);
 	}
 	
-	public void Add(String title, String url) {
+	public void add(String title, String url) {
 		Time now = new Time();
 		now.setToNow();
-		Add(new Item(title, url, now));
+		add(new Item(title, url, now));
 	}
 	
-	public void Add(Item item) {
+	public void add(Item item) {
 		mStorage.saveItem(item);
 	}
 	
-	public List<Item> getHistoryToday(Time from, Time to) {
+	public List<Item> getHistoryToday() {
+		
+		Time now = new Time();
+		now.setToNow();
+		
+		Time from = new Time();
+		from.set(now.monthDay, now.month, now.year);
+		Time to = new Time();
+		to.set(now.monthDay + 1, now.month, now.year);
+		
+		Log.d("History", String.format("from: %d, %s, to: %d, %s", 
+			from.toMillis(false), from.toString(), 
+			to.toMillis(false), to.toString()));
+		
+		return getHistory(from, to);
+	}
+	
+	public List<Item> getHistoryYesterday() {
+		Time now = new Time();
+		now.setToNow();
+		
+		Time from = new Time();
+		from.set(now.monthDay - 1, now.month, now.year);
+		Time to = new Time();
+		to.set(now.monthDay, now.month, now.year);
+		
+		Log.d("History", String.format("from: %d, %s, to: %d, %s", 
+			from.toMillis(false), from.toString(), 
+			to.toMillis(false), to.toString()));
+		
+		return getHistory(from, to);
+	}
+	
+	public List<Item> getHistoryRecentWeek() {
+		Time now = new Time();
+		now.setToNow();
+		
+		Time from = new Time();
+		from.set(now.monthDay - 6, now.month, now.year);
+		Time to = new Time();
+		to.set(now.monthDay + 1, now.month, now.year);
+		
+		Log.d("History", String.format("from: %d, %s, to: %d, %s", 
+			from.toMillis(false), from.toString(), 
+			to.toMillis(false), to.toString()));
+		
+		return getHistory(from, to);
+	}
+	
+	public List<Item> getHistoryRecentMonth() {
+		Time now = new Time();
+		now.setToNow();
+		
+		Time from = new Time();
+		from.set(0, now.month, now.year);
+		Time to = new Time();
+		to.set(now.monthDay + 1, now.month, now.year);
+		
+		Log.d("History", String.format("from: %d, %s, to: %d, %s", 
+			from.toMillis(false), from.toString(), 
+			to.toMillis(false), to.toString()));
+		
+		return getHistory(from, to);
+	}
+	
+	
+	public List<Item> getHistory(Time from, Time to) {
 		return mStorage.getItem(from, to);
 	}
 	

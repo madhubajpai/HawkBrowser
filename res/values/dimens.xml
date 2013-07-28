@@ -11,4 +11,8 @@
     <dimen name="bookmark_item_padding">5dp</dimen>
     <dimen name="bookmark_custom_tab_linewidth">100dp</dimen>
     <dimen name="bookmark_custom_tab_lineheight">3dp</dimen>
+    <dimen name="history_folder_item_margin">10dp</dimen>
+    <dimen name="history_item_margin">5dp</dimen>
+    <dimen name="history_item_marginleft">10dp</dimen>
+    <dimen name="history_item_padding">5dp</dimen>
 </resources>

@@ -1,16 +1,20 @@
 package com.hawkbrowser.app;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.shell.HawkBrowser;
 
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -25,6 +29,7 @@ public class BookmarkActivity extends Activity {
 	private TabHost	mTabHost;
 	private TabWidget mTabWidget;
 	private Bookmark mBookmark;
+	private boolean mIsHistoryLoaded = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,12 @@ public class BookmarkActivity extends Activity {
 					} else {
 						lineView.setVisibility(View.VISIBLE);
 					}
-				}					
+				}
+				
+				if(tabId.equals(HISTORY_TAB_ID) && !mIsHistoryLoaded) {
+					mIsHistoryLoaded = true;
+					loadHistory();
+				}
 			}
 		});
 		
@@ -115,6 +125,41 @@ public class BookmarkActivity extends Activity {
 				
 		ListView listView = (ListView)
 			mTabHost.findViewById(R.id.bookmarkhistory_bookmark);
+		listView.setAdapter(adapter);
+	}
+	
+	private void loadHistory() {
+		History history = HawkBrowser.getHistory(this);
+		
+		ArrayList< List<History.Item> > items = 
+			new ArrayList< List<History.Item> >();
+		
+		List<History.Item> item = history.getHistoryToday();
+		if((null != item) && (item.size() > 0)) {
+			items.add(item);
+		}
+		
+		item = history.getHistoryYesterday();
+		if((null != item) && (item.size() > 0)) {
+			items.add(item);
+		}
+		
+		item = history.getHistoryRecentWeek();
+		if((null != item) && (item.size() > 0)) {
+			items.add(item);
+		}
+		
+		item = history.getHistoryRecentMonth();
+		if((null != item) && (item.size() > 0)) {
+			items.add(item);
+		}
+		
+		HistoryExpListAdapter adapter = 
+			new HistoryExpListAdapter(this, items);
+		
+		ExpandableListView listView = (ExpandableListView)
+			mTabHost.findViewById(R.id.bookmarkhistory_history);
+		listView.setGroupIndicator(null);
 		listView.setAdapter(adapter);
 	}
 }

@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import com.hawkbrowser.R;
 import com.hawkbrowser.app.Bookmark;
 import com.hawkbrowser.app.BookmarkActivity;
+import com.hawkbrowser.app.History;
 import com.hawkbrowser.core.*;
 import com.hawkbrowser.util.*;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -49,6 +51,7 @@ public final class HawkBrowser extends Activity
 	private AddressBar				mAddressBar;
 	private ProgressBar				mProgressBar;
 	private PopMenuBar				mPopMenuBar;
+	private static History			mHistory;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -289,6 +292,16 @@ public final class HawkBrowser extends Activity
 	public void onPageFinished(WebView view, String url) {
 		mProgressBar.setVisibility(View.GONE);
 		setBackForwardState(view);
+		addHistory(view, url);
+	}
+	
+	private void addHistory(WebView view, String url) {		
+		String title = view.getTitle();
+		if(null == title) {
+			title = getResources().getString(R.string.defaultpagetitle);
+		}
+		
+		getHistory(this).add(title, url);
 	}
 	
 	@Override
@@ -336,10 +349,18 @@ public final class HawkBrowser extends Activity
 		bm.Flush();
 	}
 	
+	public static History getHistory(Context context) {	
+		if(null == mHistory) {
+			mHistory = new History(context);
+		}
+		
+		return mHistory;
+	}
+	
 	public void onShowBookmark() {
 		mPopMenuBar.dismiss();
 		mPopMenuBar = null;
-		
+				
 		Intent intent = new Intent(this, BookmarkActivity.class);
 		startActivity(intent);
 	}
