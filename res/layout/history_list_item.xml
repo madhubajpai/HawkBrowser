@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/history_list_item_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_gravity="left"
+    android:lines="2"
+    android:maxLines="2"
+    android:text="abcdef"
+    android:layout_margin="@dimen/history_item_margin"
+    android:drawableLeft="@drawable/time"
+    android:drawablePadding="@dimen/history_item_padding"
+    android:padding="@dimen/history_item_padding"
+    android:textAlignment="viewStart" >
+</TextView>
 
-    <ImageView
-        android:id="@+id/history_list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-		android:layout_marginTop="@dimen/history_item_margin"
-		android:layout_marginBottom="@dimen/history_item_margin"
-		android:layout_marginLeft="@dimen/history_item_marginleft"
-        android:src="@drawable/time" />
-
-    <TextView
-        android:id="@+id/history_list_item_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:lines="2"
-        android:maxLines="2"
-        android:layout_margin="@dimen/history_item_margin"
-        android:paddingTop="@dimen/history_item_padding"
-        android:textAlignment="viewStart" >
-    </TextView>
-
-</LinearLayout>

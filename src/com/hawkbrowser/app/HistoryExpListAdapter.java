@@ -1,10 +1,14 @@
 package com.hawkbrowser.app;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.hawkbrowser.R;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +20,49 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 
 	private List< List<History.Item> > mGroupItems;
 	private Context mContext;
+	private History mHistory;
 	
 	private static final int[] mGroupNames = {
 		R.string.history_today,
 		R.string.history_yestory,
-		R.string.history_recentweek,
-		R.string.history_recentmonth
+		R.string.history_longago
 	};
 	
-	public HistoryExpListAdapter(Context context, 
-			List< List<History.Item> > items) {
+	public HistoryExpListAdapter(Context context, History history) { 
 		
 		mContext = context;
-		mGroupItems = items;
+		mHistory = history;
+		
+		mGroupItems = new ArrayList< List<History.Item> >();
+		ArrayList<History.Item> todayItems = new ArrayList<History.Item>();
+		ArrayList<History.Item> yesterdayItems = new ArrayList<History.Item>();
+		ArrayList<History.Item> longAgoItems = new ArrayList<History.Item>();
+		
+		List<History.Item> allItems = mHistory.getHistory(null, null);
+				
+		if(null != allItems) {
+			int yearDayToday = 
+				Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+						
+			for(History.Item item : allItems) {
+				
+				int yearDay = item.time().get(Calendar.DAY_OF_YEAR);
+				Log.d("History", String.format("today: %d; item day: %d", 
+					yearDayToday, yearDay));
+				
+				if(yearDay == yearDayToday) {
+					todayItems.add(item);
+				} else if(yearDay == yearDayToday - 1) {
+					yesterdayItems.add(item);
+				} else {
+					longAgoItems.add(item);
+				}
+			}
+		}
+
+		mGroupItems.add(todayItems);
+		mGroupItems.add(yesterdayItems);
+		mGroupItems.add(longAgoItems);
 	}
 
 	@Override
@@ -46,22 +80,23 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(int groupPosition, int childPosition, 
 		boolean isLastChild, View convertView, ViewGroup parent) {
-
-		ViewGroup vg = null;
+		
+		TextView v = null;
+		
 		
 		if(null != convertView) {
-			vg = (ViewGroup) convertView;
+			v = (TextView) convertView;
 		}
 		
-		if(null == vg) {
-			vg = (ViewGroup) LayoutInflater.from(mContext).inflate(
+		if(null == v) {
+			v = (TextView) LayoutInflater.from(mContext).inflate(
 					R.layout.history_list_item, null);
 		}
-				
-		TextView tv = (TextView)vg.findViewById(R.id.history_list_item_title);
-		tv.setText(mGroupItems.get(groupPosition).get(childPosition).title());
 		
-		return tv;
+		History.Item item = mGroupItems.get(groupPosition).get(childPosition);
+		v.setText(item.title() + "\n" + item.url());
+		
+		return v;
 	}
 
 	@Override
@@ -84,14 +119,10 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getGroupCount() {
-		// TODO Auto-generated method stub
-		if(null != mGroupItems) {
-			return mGroupItems.size();
-		} else {
-			return 0;
-		}
+		// TODO Auto-generated method stub		
+		return mGroupNames.length;
 	}
-
+	
 	@Override
 	public long getGroupId(int groupPosition) {
 		// TODO Auto-generated method stub
@@ -101,7 +132,7 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, 
 		View convertView, ViewGroup parent) {
-				
+						
 		ViewGroup vg = null;
 		
 		if(null != convertView) {
@@ -115,7 +146,12 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 		
 		TextView titleView = (TextView) 
 			vg.findViewById(R.id.history_group_item_date);
-		titleView.setText(mGroupNames[groupPosition]);
+		
+		Resources rc = mContext.getResources();
+		String title = String.format(
+			rc.getString(mGroupNames[groupPosition], 
+			mGroupItems.get(groupPosition).size()));
+		titleView.setText(title);
 
 		ImageView arrowView = (ImageView)
 			vg.findViewById(R.id.history_group_item_arrow);

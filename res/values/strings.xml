@@ -28,9 +28,8 @@
     <string name="bookmark">书    签</string>
     <string name="history">历    史</string>
     <string name="bookmark_exist">书签已存在</string>
-    <string name="history_today">今天</string>
-    <string name="history_yestory">昨天</string>
-    <string name="history_recentweek">最近一周</string>
-    <string name="history_recentmonth">最近一月</string>
+    <string name="history_today">今天(%d)</string>
+    <string name="history_yestory">昨天(%d)</string>
+    <string name="history_longago">更早(%d)</string>
 
 </resources>

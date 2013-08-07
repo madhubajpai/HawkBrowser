@@ -129,33 +129,10 @@ public class BookmarkActivity extends Activity {
 	}
 	
 	private void loadHistory() {
-		History history = HawkBrowser.getHistory(this);
 		
-		ArrayList< List<History.Item> > items = 
-			new ArrayList< List<History.Item> >();
-		
-		List<History.Item> item = history.getHistoryToday();
-		if((null != item) && (item.size() > 0)) {
-			items.add(item);
-		}
-		
-		item = history.getHistoryYesterday();
-		if((null != item) && (item.size() > 0)) {
-			items.add(item);
-		}
-		
-		item = history.getHistoryRecentWeek();
-		if((null != item) && (item.size() > 0)) {
-			items.add(item);
-		}
-		
-		item = history.getHistoryRecentMonth();
-		if((null != item) && (item.size() > 0)) {
-			items.add(item);
-		}
-		
+		History history = HawkBrowser.getHistory(this);		
 		HistoryExpListAdapter adapter = 
-			new HistoryExpListAdapter(this, items);
+			new HistoryExpListAdapter(this, history);
 		
 		ExpandableListView listView = (ExpandableListView)
 			mTabHost.findViewById(R.id.bookmarkhistory_history);
