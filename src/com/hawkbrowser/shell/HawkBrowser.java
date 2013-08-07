@@ -41,7 +41,12 @@ public final class HawkBrowser extends Activity
 		HawkWebViewClient.EventListener, 
 		HawkWebChromeClient.EventListener,
 		PopMenuBar.EventListener {
-
+	
+	public static final String INTENT_EXTRA_ACTION = "action";
+	public static final String INTENT_EXTRA_URL = "url";
+	public static final String INTENT_ACTION_OPENURL = "openUrl";
+	public static final String HOME_PAGE = "http://www.baidu.com";
+	
 	private ArrayList<HawkWebView> 	mViews;
 	private HawkWebView 			mCurrentView;
 	private LayoutParams 			mWebViewLayoutParams;
@@ -159,13 +164,13 @@ public final class HawkBrowser extends Activity
 	
 	*/
 	
-	private void newWebView() {
+	private void newWebView(String url) {
 		HawkWebView newView = new HawkWebView(this);
 		newView.setId(R.id.mainframe_webView);
 		newView.init(new HawkWebViewClient(this), 
 			new HawkWebChromeClient(this));
 		newView.setLayoutParams(mWebViewLayoutParams);
-		newView.loadUrl("http://www.baidu.com");
+		newView.loadUrl(url);
 		showView(newView);
 	}
 	
@@ -213,7 +218,7 @@ public final class HawkBrowser extends Activity
 				if(mViews.isEmpty()) {
 					mViewSelecter.dismiss();
 					mViewSelecter = null;
-					newWebView();
+					newWebView(HOME_PAGE);
 				} else {
 					mViewSelecter.updateItems();
 					
@@ -247,7 +252,7 @@ public final class HawkBrowser extends Activity
 	
 	@Override
 	public void onNewWebView() {
-		newWebView();
+		newWebView(HOME_PAGE);
 	}
 	
 	@Override
@@ -407,5 +412,20 @@ public final class HawkBrowser extends Activity
         for(HawkWebView v : mViews) {
         	v.destroy();
         }
+    }
+    
+    @Override
+    protected void onNewIntent(Intent intent) {
+    	
+    	String action = intent.getStringExtra(INTENT_EXTRA_ACTION);  
+    	
+    	if((null != action) && action.equals(INTENT_ACTION_OPENURL)) {
+    		
+    		String url = intent.getStringExtra(INTENT_EXTRA_URL);
+    		
+    		if(url != null) {
+    			newWebView(url);
+    		}
+    	}
     }
 }

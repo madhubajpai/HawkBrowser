@@ -7,6 +7,7 @@ import com.hawkbrowser.R;
 import com.hawkbrowser.shell.HawkBrowser;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -126,6 +128,7 @@ public class BookmarkActivity extends Activity {
 		ListView listView = (ListView)
 			mTabHost.findViewById(R.id.bookmarkhistory_bookmark);
 		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(adapter);
 	}
 	
 	private void loadHistory() {
@@ -138,5 +141,26 @@ public class BookmarkActivity extends Activity {
 			mTabHost.findViewById(R.id.bookmarkhistory_history);
 		listView.setGroupIndicator(null);
 		listView.setAdapter(adapter);
+		listView.setOnChildClickListener(adapter);
+	}
+	
+	public void onBookmarkItemClicked(Bookmark.Item item) {
+		
+		openUrl(item.url());
+	}
+	
+	public void onHistoryItemClicked(History.Item item) {
+		openUrl(item.url());
+	}
+	
+	private void openUrl(String url) {
+		
+		Intent intent = new Intent(this, HawkBrowser.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		intent.putExtra(HawkBrowser.INTENT_EXTRA_URL, url);
+		intent.putExtra(HawkBrowser.INTENT_EXTRA_ACTION, 
+			HawkBrowser.INTENT_ACTION_OPENURL);
+		startActivity(intent);
+		finish();
 	}
 }

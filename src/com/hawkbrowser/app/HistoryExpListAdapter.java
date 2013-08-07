@@ -12,15 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class HistoryExpListAdapter extends BaseExpandableListAdapter {
+public class HistoryExpListAdapter extends BaseExpandableListAdapter
+	implements ExpandableListView.OnChildClickListener {
 
 	private List< List<History.Item> > mGroupItems;
-	private Context mContext;
 	private History mHistory;
+	private BookmarkActivity mContext;
 	
 	private static final int[] mGroupNames = {
 		R.string.history_today,
@@ -28,7 +31,7 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 		R.string.history_longago
 	};
 	
-	public HistoryExpListAdapter(Context context, History history) { 
+	public HistoryExpListAdapter(BookmarkActivity context, History history) { 
 		
 		mContext = context;
 		mHistory = history;
@@ -63,6 +66,15 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 		mGroupItems.add(todayItems);
 		mGroupItems.add(yesterdayItems);
 		mGroupItems.add(longAgoItems);
+	}
+	
+	@Override
+	public boolean onChildClick(ExpandableListView parent, 
+		View v, int groupPosition, int childPosition, long id) {
+				
+		History.Item item = mGroupItems.get(groupPosition).get(childPosition);
+		mContext.onHistoryItemClicked(item);
+		return true;
 	}
 
 	@Override
@@ -171,7 +183,7 @@ public class HistoryExpListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

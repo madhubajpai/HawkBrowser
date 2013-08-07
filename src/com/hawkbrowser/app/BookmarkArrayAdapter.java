@@ -9,21 +9,32 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class BookmarkArrayAdapter extends BaseAdapter {
+public class BookmarkArrayAdapter extends BaseAdapter
+	implements AdapterView.OnItemClickListener {
 
 	private List<Bookmark.Item> mItems;
 	private LayoutInflater mInflater;
+	private BookmarkActivity mContext;
 	
-	public BookmarkArrayAdapter(Context context, 
+	public BookmarkArrayAdapter(BookmarkActivity context, 
 			List<Bookmark.Item> items) {
 				
 		mItems = items;
+		mContext = context;
 		mInflater = (LayoutInflater) 
-			context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
+	
+	@Override
+	public void onItemClick(AdapterView<?> parent, 
+			View view, int position, long id) {
+		mContext.onBookmarkItemClicked(mItems.get(position));
 	}
 	
 	@Override
