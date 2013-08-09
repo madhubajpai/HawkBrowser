@@ -1,5 +1,6 @@
 package com.hawkbrowser.util;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -7,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -48,5 +51,39 @@ public class CommonUtil {
 			return new Point(display.getWidth(), display.getHeight());
 		}
 		
+	}
+	
+	public static long getExternalStorageFreeSpace() {
+		
+		File path = Environment.getExternalStorageDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		
+		return stat.getAvailableBlocks() * stat.getBlockSize();
+	}
+	
+	public static File getUniqueFile(String dir, String fileName) {
+		
+		int fileNameSuffix = 0;
+		File file = new File(dir, fileName);
+		
+		while(file.exists()) {
+			
+			String newFileName;
+			int dotIndex = fileName.lastIndexOf('.');
+			
+			if(-1 == dotIndex) {
+				newFileName = String.format("%s%d", fileName, ++fileNameSuffix);
+			} else {
+				String name = fileName.substring(0, dotIndex);
+				String ext = fileName.substring(dotIndex + 1);
+				newFileName = String.format("%s%d.%s", 
+					name, ++fileNameSuffix, ext);
+			}
+			
+			file = new File(Environment.getExternalStorageDirectory(), 
+					newFileName);
+		} 
+		
+		return file;
 	}
 }

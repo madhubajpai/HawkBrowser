@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
-public class PopMenuBar {
+public class PopMenuBar implements View.OnClickListener {
 
 	private Context mContext;
 	private ViewGroup mView;
@@ -23,6 +23,7 @@ public class PopMenuBar {
 		void onRefresh();	
 		void onAddBookmark();
 		void onShowBookmark();
+		void onShowDownloadMgr();
 	}	
 	
 	public PopMenuBar(Context context) {
@@ -49,48 +50,49 @@ public class PopMenuBar {
 		mView = (ViewGroup) li.inflate(R.layout.pop_menu, null);
 		
 		View bmHis = mView.findViewById(R.id.popmenu_bokmarkhistory);
-		bmHis.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(null != mListener) {
-					mListener.onShowBookmark();
-				}
-			}
-		});
+		bmHis.setOnClickListener(this);
 		
 		View addBm = mView.findViewById(R.id.popmenu_addbookmark);
-		addBm.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(null != mListener) {
-					mListener.onAddBookmark();
-				}
-			}
-		});
+		addBm.setOnClickListener(this);
 		
 		View refresh = mView.findViewById(R.id.popmenu_refresh);
-		refresh.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(null != mListener) {
-					mListener.onRefresh();
-				}
-			}
-		});
+		refresh.setOnClickListener(this);
 		
 		View quit = mView.findViewById(R.id.popmenu_exit);
-		quit.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(null != mListener) {
-					mListener.onQuit();
-				}
-			}
-		});
+		quit.setOnClickListener(this);
+		
+		View download = mView.findViewById(R.id.popmenu_downloadmanager);
+		download.setOnClickListener(this);
+	}
+	
+	@Override
+	public void onClick(View v) {
+		
+		if(null == mListener) {
+			return;
+		}
+		
+		switch(v.getId()) {
+			case R.id.popmenu_bokmarkhistory:
+				mListener.onShowBookmark();
+				break;
+				
+			case R.id.popmenu_addbookmark:
+				mListener.onAddBookmark();
+				break;
+				
+			case R.id.popmenu_refresh:
+				mListener.onRefresh();
+				break;
+				
+			case R.id.popmenu_exit:
+				mListener.onQuit();
+				break;
+				
+			case R.id.popmenu_downloadmanager:
+				mListener.onShowDownloadMgr();
+				break;
+		}
 	}
 	
     public void show(View anchor) {

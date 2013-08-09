@@ -3,9 +3,7 @@ package com.hawkbrowser.shell;
 import java.util.ArrayList;
 
 import com.hawkbrowser.R;
-import com.hawkbrowser.app.Bookmark;
-import com.hawkbrowser.app.BookmarkActivity;
-import com.hawkbrowser.app.History;
+import com.hawkbrowser.app.*;
 import com.hawkbrowser.core.*;
 import com.hawkbrowser.util.*;
 
@@ -15,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -27,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,12 +40,12 @@ public final class HawkBrowser extends Activity
 	implements NavigationBar.EventListener,
 		HawkWebViewClient.EventListener, 
 		HawkWebChromeClient.EventListener,
+		DownloadListener,
 		PopMenuBar.EventListener {
 	
 	public static final String INTENT_EXTRA_ACTION = "action";
 	public static final String INTENT_EXTRA_URL = "url";
 	public static final String INTENT_ACTION_OPENURL = "openUrl";
-	public static final String HOME_PAGE = "http://www.baidu.com";
 	
 	private ArrayList<HawkWebView> 	mViews;
 	private HawkWebView 			mCurrentView;
@@ -57,6 +57,7 @@ public final class HawkBrowser extends Activity
 	private ProgressBar				mProgressBar;
 	private PopMenuBar				mPopMenuBar;
 	private static History			mHistory;
+	private static DownloadManager	mDownloadMgr;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public final class HawkBrowser extends Activity
 		mIndexOfWebView = layout.indexOfChild(newView);
 		newView.init(new HawkWebViewClient(this), 
 			new HawkWebChromeClient(this));
+		newView.setDownloadListener(this);
 		newView.loadUrl(getResources().getString(R.string.homepageurl));
 		showView(newView);
 		
@@ -170,6 +172,7 @@ public final class HawkBrowser extends Activity
 		newView.init(new HawkWebViewClient(this), 
 			new HawkWebChromeClient(this));
 		newView.setLayoutParams(mWebViewLayoutParams);
+		newView.setDownloadListener(this);
 		newView.loadUrl(url);
 		showView(newView);
 	}
@@ -218,7 +221,7 @@ public final class HawkBrowser extends Activity
 				if(mViews.isEmpty()) {
 					mViewSelecter.dismiss();
 					mViewSelecter = null;
-					newWebView(HOME_PAGE);
+					newWebView(getResources().getString(R.string.homepageurl));
 				} else {
 					mViewSelecter.updateItems();
 					
@@ -252,7 +255,7 @@ public final class HawkBrowser extends Activity
 	
 	@Override
 	public void onNewWebView() {
-		newWebView(HOME_PAGE);
+		newWebView(getResources().getString(R.string.homepageurl));
 	}
 	
 	@Override
@@ -316,7 +319,28 @@ public final class HawkBrowser extends Activity
 	}
 	// WebViewClient Listener end
 	
+	@Override
+	public void onDownloadStart(String url, String userAgent, 
+		String contentDisposition, String mimetype, long contentLength) {
+		
+		Log.d("Download", String.format("download: %s", url));
+		
+		Uri uri = Uri.parse(url);
+		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		startActivity(intent);
+	}
+	
 	// PopMenuBar Listener begin
+	@Override
+	public void onShowDownloadMgr() {
+		
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+				
+		Intent intent = new Intent(this, DownloadActivity.class);
+		startActivity(intent);
+	}
+	
 	@Override
 	public void onQuit() {
 		mPopMenuBar.dismiss();
@@ -360,6 +384,14 @@ public final class HawkBrowser extends Activity
 		}
 		
 		return mHistory;
+	}
+	
+	public static DownloadManager getDownloadMgr(Context context) {
+		if(null == mDownloadMgr) {
+			mDownloadMgr = new DownloadManager(context);
+		}
+		
+		return mDownloadMgr;
 	}
 	
 	public void onShowBookmark() {
