@@ -86,4 +86,18 @@ public class CommonUtil {
 		
 		return file;
 	}
+	
+	public static String fileNameFromUrl(String url) {
+		
+		String name = null;
+		
+		int lastDot = url.lastIndexOf('/');
+		if(-1 == lastDot) {
+			name = url;
+		} else { 
+			name = url.substring(lastDot + 1);
+		}
+		
+		return name;
+	}
 }

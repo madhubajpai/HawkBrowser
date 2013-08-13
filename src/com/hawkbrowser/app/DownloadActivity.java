@@ -1,6 +1,10 @@
 package com.hawkbrowser.app;
 
+import java.util.List;
+
 import com.hawkbrowser.R;
+import com.hawkbrowser.core.HawkWebView;
+import com.hawkbrowser.shell.HawkBrowser;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -9,27 +13,32 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 
-public class DownloadActivity extends Activity {
+public class DownloadActivity extends Activity 
+	implements DownloadManager.Listener {
 	
 	private static final String DOWNLOAD_TAB_ID = "download";
 	private static final String FILE_TAB_ID = "file";
 	
 	private TabHost	mTabHost;
 	private TabWidget mTabWidget;
-	private boolean mIsDownloadItemsLoaded;
+	private boolean mIsFileItemsLoaded;
+	private DownloadExpListAdapter mDownloadListAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		mIsFileItemsLoaded = false;
 		setContentView(R.layout.download);
 		initLayout();
 		setupListeners();
+		loadDownloadItems();		
 	}
 	
 	private void initLayout() {
@@ -51,6 +60,7 @@ public class DownloadActivity extends Activity {
 		tabFile.setContent(R.id.download_file);
 		tabFile.setIndicator(vh);
 		mTabHost.addTab(tabFile);
+		
 	}
 	
 	private void setupListeners() {
@@ -71,8 +81,8 @@ public class DownloadActivity extends Activity {
 					}
 				}
 				
-				if(tabId.equals(DOWNLOAD_TAB_ID) && !mIsDownloadItemsLoaded) {
-					mIsDownloadItemsLoaded = true;
+				if(tabId.equals(FILE_TAB_ID) && !mIsFileItemsLoaded) {
+					mIsFileItemsLoaded = true;
 				}
 			}
 		});
@@ -103,5 +113,60 @@ public class DownloadActivity extends Activity {
 		
 		return vg;
 	}
+	
+	private void loadDownloadItems() {
+		
+		List<DownloadItem> items = 
+			HawkBrowser.getDownloadMgr(this).getItems();
+		
+		mDownloadListAdapter = new DownloadExpListAdapter(this, items);
+			
+		ExpandableListView listView = (ExpandableListView)
+			mTabHost.findViewById(R.id.download_download);
+		listView.setGroupIndicator(null);
+		listView.setAdapter(mDownloadListAdapter);
+		listView.setOnChildClickListener(mDownloadListAdapter);
+	}
+	
+
+	@Override
+	public void onProgressUpdate(DownloadItem item) {
+		mDownloadListAdapter.notifyDataSetChanged();
+	}
+	
+	@Override
+	public void onDownloadFinished(DownloadItem item) {
+		List<DownloadItem> items = 
+				HawkBrowser.getDownloadMgr(this).getItems();
+		mDownloadListAdapter.setData(items);
+		mDownloadListAdapter.notifyDataSetChanged();
+	}
+	
+	protected void onStart() {
+		super.onStart();
+		
+		HawkBrowser.getDownloadMgr(this).setEventListener(this);
+	}
+	
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+		HawkBrowser.getDownloadMgr(this).setEventListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        HawkBrowser.getDownloadMgr(this).setEventListener(null);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        
+        HawkBrowser.getDownloadMgr(this).setEventListener(null);
+    }
 
 }

@@ -7,4 +7,5 @@
     <color name="popmenu_text_color">@android:color/white</color>
     <color name="tab_widget_color">#DFE6E4</color>
     <color name="tab_widget_line_color">#33B5E5</color>
+    <color name="progressbar_color">#00CC66</color>
 </resources>

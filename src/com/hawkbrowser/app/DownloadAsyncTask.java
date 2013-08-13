@@ -21,6 +21,7 @@ public class DownloadAsyncTask extends
 	private static int READ_TIMEOUT = 10000; // ms
 
 	private DownloadManager mDownloadMgr;
+	private DownloadItem mItem;
 	
 	public DownloadAsyncTask(DownloadManager downloadMgr) {
 		mDownloadMgr = downloadMgr;
@@ -32,10 +33,10 @@ public class DownloadAsyncTask extends
 		
 		try {
 			
-			DownloadItem item = params[0];
-			item.setStatus(DownloadItem.Status.ONPROGRESS);
+			mItem = params[0];
+			mItem.setStatus(DownloadItem.Status.ONPROGRESS);
 			
-			URL url = new URL(item.url());
+			URL url = new URL(mItem.url());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(READ_TIMEOUT);
 			conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -45,13 +46,14 @@ public class DownloadAsyncTask extends
 			conn.connect();
 			int responseCode = conn.getResponseCode();
 			Log.d("Download", String.format("Response code: %d, url %s", 
-					responseCode, item.url()));
+					responseCode, mItem.url()));
 			
-			if(HttpStatus.SC_OK != responseCode) {
+			if(HttpStatus.SC_OK == responseCode) {
 				httpStream = conn.getInputStream();
-				saveToFile(url.getFile(), httpStream);
+				saveToFile(CommonUtil.fileNameFromUrl(mItem.url()), 
+					httpStream);
 			} else {
-				item.setStatus(DownloadItem.Status.FAILED);
+				mItem.setStatus(DownloadItem.Status.FAILED);
 			}
 			
 		} catch(Exception e) {
@@ -79,11 +81,13 @@ public class DownloadAsyncTask extends
 		mDownloadMgr.onDownloadFinished(item);
 	}
 	
-	protected void onProgressUpdate(DownloadItem item, 
-		Integer... progress) {
+	protected void onProgressUpdate(Integer... progress) {
 		
-		item.setProgress(progress[0].longValue());
-		mDownloadMgr.onProgressUpdate(item);
+		Log.d("Download", String.format("%s: onProgressUpdate: %d", 
+			mItem.name(), progress[0].longValue()));
+		
+		mItem.setProgress(progress[0].longValue());
+		mDownloadMgr.onProgressUpdate(mItem);
 	}
 	
 	private void saveToFile(String fileName, InputStream inputStream) {
@@ -98,17 +102,28 @@ public class DownloadAsyncTask extends
 		FileOutputStream fos = null;
 		File file = CommonUtil.getUniqueFile(
 			Environment.getExternalStorageDirectory().getPath(), fileName);
+		Log.d("Download", String.format("Output File: %s", file.getPath()));
 		
 		try {
 			fos = new FileOutputStream(file);
 			byte[] buffer = new byte[4096];
 			int readLen = 0;
 			int totalReadLen = 0;
+			long timeLastProgressUpdate = System.nanoTime();
+			long progressUpdateDistance = 300 * 1000 * 1000; // 200ms
 			
-			while((readLen = inputStream.read()) != -1) {
+			while((readLen = inputStream.read(buffer)) != -1) {
 				fos.write(buffer, 0, readLen);
 				totalReadLen += readLen;
-				publishProgress(totalReadLen);
+				Log.d("Download", String.format("%s: saveToFile: %d", 
+						fileName, readLen));
+				
+				if(System.nanoTime() - timeLastProgressUpdate 
+						> progressUpdateDistance) {
+					publishProgress(totalReadLen);
+					totalReadLen = 0;
+					timeLastProgressUpdate = System.nanoTime();
+				}
 			}
 			
 			fos.flush();

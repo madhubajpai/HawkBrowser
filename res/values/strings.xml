@@ -35,5 +35,7 @@
     <string name="diskspacenotengouth">空间不足</string>
     <string name="download_management">下载管理</string>
     <string name="file_management">文件管理</string>
+    <string name="download_ondownload">正在下载(%d)</string>
+    <string name="download_downloadfinished">下载完成(%d)</string>
 
 </resources>

@@ -325,9 +325,14 @@ public final class HawkBrowser extends Activity
 		
 		Log.d("Download", String.format("download: %s", url));
 		
+		/*
 		Uri uri = Uri.parse(url);
 		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 		startActivity(intent);
+		*/
+		
+		getDownloadMgr(this).Download(url, userAgent, 
+			contentDisposition, mimetype, contentLength);
 	}
 	
 	// PopMenuBar Listener begin
@@ -443,6 +448,10 @@ public final class HawkBrowser extends Activity
         
         for(HawkWebView v : mViews) {
         	v.destroy();
+        }
+        
+        if(null != mDownloadMgr) {
+        	mDownloadMgr.save();
         }
     }
     

@@ -13,16 +13,24 @@ import com.hawkbrowser.util.CommonUtil;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 public final class DownloadManager {
+	
+	public static interface Listener {
+		void onProgressUpdate(DownloadItem item);
+		void onDownloadFinished(DownloadItem item);
+	}
 	
 	public static final String FILE_NAME = "download.dat";
 	
 	private int mItemId = 0;
 	private Context mContext;
 	private List<DownloadItem> mItems;
-	
+	private Listener mListener;
+		
 	public DownloadManager(Context context) {
+		
 		mContext = context;
 		load();
 	}
@@ -36,10 +44,12 @@ public final class DownloadManager {
 			return;
 		}
 		
+		/*
 		if(CommonUtil.getExternalStorageFreeSpace() < contentLength) {
 			CommonUtil.showTips(mContext, R.string.diskspacenotengouth);
 			return;
 		}
+		*/
 		
 		DownloadItem item = new DownloadItem(++mItemId, contentLength, url);
 		mItems.add(item);
@@ -48,14 +58,29 @@ public final class DownloadManager {
 	
 	public void onProgressUpdate(DownloadItem item) {
 		
+		if(null != mListener) {
+			mListener.onProgressUpdate(item);
+		}
 	}
 	
 	public void onDownloadFinished(DownloadItem item) {
 		
+		if(null != mListener) {
+			mListener.onDownloadFinished(item);
+		}
+	}
+	
+	public void setEventListener(Listener listener) {
+		mListener = listener;
+	}
+	
+	public List<DownloadItem> getItems() {
+		return mItems;
 	}
 	
 	private void load() {
 		
+		mItems = new ArrayList<DownloadItem>();
 		File file = new File(mContext.getFilesDir(), FILE_NAME);
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
@@ -64,12 +89,13 @@ public final class DownloadManager {
 			
 			fis = new FileInputStream(file);
 			ois = new ObjectInputStream(fis);
-			mItems = new ArrayList<DownloadItem>();
 			
 			do {
 				DownloadItem item = (DownloadItem) ois.readObject();
 				
 				if(null != item) {
+					Log.d("download", 
+						String.format("load: %s", item.toString()));
 					mItems.add(item);
 				} else {
 					break;
@@ -111,6 +137,8 @@ public final class DownloadManager {
 			
 			if(null != mItems) {
 				for(DownloadItem item : mItems) {
+					Log.d("download", 
+							String.format("save: %s", item.toString()));
 					oos.writeObject(item);
 				}
 			}
