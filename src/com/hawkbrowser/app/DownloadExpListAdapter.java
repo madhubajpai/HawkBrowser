@@ -60,7 +60,10 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 	@Override
 	public boolean onChildClick(ExpandableListView parent, 
 		View v, int groupPosition, int childPosition, long id) {
-				
+		
+		DownloadItem item = mGroupItems.get(groupPosition).get(childPosition); 
+		mContext.onDownloadItemClick(item);
+		
 		return true;
 	}
 
@@ -103,7 +106,11 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 		
 		TextView speed = (TextView)
 			vg.findViewById(R.id.download_listitem_speed);
-		speed.setText(String.format("%d KB/S", item.downloadSpeed()));
+		if(item.status() == DownloadItem.Status.FINISHED) {
+			speed.setVisibility(View.INVISIBLE);
+		} else {
+			speed.setText(String.format("%d KB/S", item.downloadSpeed()));
+		}
 		
 		ProgressBar pb = (ProgressBar)
 			vg.findViewById(R.id.download_progressbar);

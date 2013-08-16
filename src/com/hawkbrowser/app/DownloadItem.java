@@ -24,6 +24,7 @@ public class DownloadItem implements Serializable {
 	private String mUrl;
 	private Status mStatus;
 	private String mName;
+	private String mLocalFilePath;
 	transient private long mLastSetProgressTime;
 	transient private long mSpeed; 
 
@@ -89,6 +90,14 @@ public class DownloadItem implements Serializable {
 	
 	public long size() {
 		return mLength;
+	}
+	
+	public void setLocalFilePath(String path) {
+		mLocalFilePath = path;
+	}
+	
+	public String localFilePath() {
+		return mLocalFilePath;
 	}
 	
 	@Override

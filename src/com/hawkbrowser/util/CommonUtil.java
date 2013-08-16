@@ -16,6 +16,9 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 public class CommonUtil {
+	
+	public final static String ROOT_DATA_DIR = "hawkbrowser";
+	public final static String DOWNLOAD_DIR = "download";
 
 	public static void showTips(Context ctx, String msg) {
 		int duration = Toast.LENGTH_SHORT;
@@ -80,8 +83,7 @@ public class CommonUtil {
 					name, ++fileNameSuffix, ext);
 			}
 			
-			file = new File(Environment.getExternalStorageDirectory(), 
-					newFileName);
+			file = new File(dir, newFileName);
 		} 
 		
 		return file;
@@ -99,5 +101,26 @@ public class CommonUtil {
 		}
 		
 		return name;
+	}
+	
+	public static String getOurExtDataDir() {
+		File rootDir = Environment.getExternalStorageDirectory();
+		File ourDataDir = new File(rootDir, ROOT_DATA_DIR);
+		
+		if(!ourDataDir.exists()) {
+			ourDataDir.mkdir();
+		}
+		
+		return ourDataDir.getPath();
+	}
+	
+	public static String getDownloadDataDir() {
+		File downloadDir = new File(getOurExtDataDir(), DOWNLOAD_DIR);
+		
+		if(!downloadDir.exists()) {
+			downloadDir.mkdir();
+		}
+		
+		return downloadDir.getPath();
 	}
 }

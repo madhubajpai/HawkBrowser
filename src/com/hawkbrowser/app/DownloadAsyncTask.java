@@ -50,8 +50,9 @@ public class DownloadAsyncTask extends
 			
 			if(HttpStatus.SC_OK == responseCode) {
 				httpStream = conn.getInputStream();
-				saveToFile(CommonUtil.fileNameFromUrl(mItem.url()), 
-					httpStream);
+				String localPath = saveToFile(mItem.name(), httpStream);
+				mItem.setLocalFilePath(localPath);
+				
 			} else {
 				mItem.setStatus(DownloadItem.Status.FAILED);
 			}
@@ -90,18 +91,18 @@ public class DownloadAsyncTask extends
 		mDownloadMgr.onProgressUpdate(mItem);
 	}
 	
-	private void saveToFile(String fileName, InputStream inputStream) {
+	private String saveToFile(String fileName, InputStream inputStream) {
 		
 		Log.d("Download", String.format("save to file: %s", fileName));
 		String externalStorageState = Environment.getExternalStorageState();
 		if(!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-			return;
+			return null;
 		}
 		
 		
 		FileOutputStream fos = null;
 		File file = CommonUtil.getUniqueFile(
-			Environment.getExternalStorageDirectory().getPath(), fileName);
+			CommonUtil.getDownloadDataDir(), fileName);
 		Log.d("Download", String.format("Output File: %s", file.getPath()));
 		
 		try {
@@ -126,6 +127,11 @@ public class DownloadAsyncTask extends
 				}
 			}
 			
+			if(totalReadLen > 0) {
+				publishProgress(totalReadLen);
+				totalReadLen = 0;
+			}
+			
 			fos.flush();
 			
 		} catch(Exception e) {
@@ -145,5 +151,6 @@ public class DownloadAsyncTask extends
 			}
 		}
 		
+		return file.getPath();
 	}
 }

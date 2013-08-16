@@ -7,7 +7,9 @@ import com.hawkbrowser.core.HawkWebView;
 import com.hawkbrowser.shell.HawkBrowser;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -126,6 +128,10 @@ public class DownloadActivity extends Activity
 		listView.setGroupIndicator(null);
 		listView.setAdapter(mDownloadListAdapter);
 		listView.setOnChildClickListener(mDownloadListAdapter);
+		
+		if(mDownloadListAdapter.getChildrenCount(0) > 0) {
+			listView.expandGroup(0);
+		}
 	}
 	
 
@@ -140,6 +146,21 @@ public class DownloadActivity extends Activity
 				HawkBrowser.getDownloadMgr(this).getItems();
 		mDownloadListAdapter.setData(items);
 		mDownloadListAdapter.notifyDataSetChanged();
+		
+		// Expand the last group
+		ExpandableListView listView = (ExpandableListView)
+				mTabHost.findViewById(R.id.download_download);
+		listView.expandGroup(mDownloadListAdapter.getGroupCount() - 1);
+	}
+	
+	public void onDownloadItemClick(DownloadItem item) {
+		
+		if(null != item.localFilePath()) {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse("file://" + item.localFilePath()), 
+				"application/vnd.android.package-archive");
+			startActivity(intent);
+		}
 	}
 	
 	protected void onStart() {
