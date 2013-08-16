@@ -118,6 +118,9 @@ public final class HawkBrowser extends Activity
 		if(!mViews.contains(newView)) {
 			mViews.add(newView);
 		}
+		
+		String viewCount = String.format("%d", mViews.size());
+		mNavigationBar.setSelectWindowText(viewCount);
 	}
 	
 	/* disable options menu

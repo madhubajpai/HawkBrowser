@@ -1,12 +1,14 @@
 package com.hawkbrowser.shell;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.base.ImageButtonText;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class NavigationBar {
 
@@ -44,6 +46,21 @@ public class NavigationBar {
 		View goForward = 
 				mNavigationBar.findViewById(R.id.navigationbar_forward);
 		goForward.setEnabled(canGoForward);
+	}
+	
+	public void setSelectWindowText(String text) {
+		
+		ViewGroup selectView = (ViewGroup) 
+			mNavigationBar.findViewById(R.id.navigationbar_selectwindow);
+		TextView tv = (TextView) 
+			selectView.findViewById(R.id.navigationbar_selectwindow_text);
+		tv.setText(text);
+		
+		/*
+		ImageButtonText selectView = (ImageButtonText) 
+			mNavigationBar.findViewById(R.id.navigationbar_selectwindow);
+		selectView.setText(text);
+		*/
 	}
 	
 	private void setupEventListener() {
