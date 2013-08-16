@@ -20,6 +20,7 @@ public final class DownloadManager {
 	public static interface Listener {
 		void onProgressUpdate(DownloadItem item);
 		void onDownloadFinished(DownloadItem item);
+		void onDownloadStoped(DownloadItem item);
 	}
 	
 	public static final String FILE_NAME = "download.dat";
@@ -28,32 +29,42 @@ public final class DownloadManager {
 	private Context mContext;
 	private List<DownloadItem> mItems;
 	private Listener mListener;
+	private List<DownloadAsyncTask> mTasks;
 		
 	public DownloadManager(Context context) {
 		
 		mContext = context;
+		mTasks = new ArrayList<DownloadAsyncTask>();
 		load();
 	}
 	
 	public void Download(String url, String userAgent, 
 		String contentDisposition, String mimetype, long contentLength) {
 		
-		String externalStorageState = Environment.getExternalStorageState(); 
-		if(!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-			CommonUtil.showTips(mContext, R.string.nosdcard);
-			return;
+		if(CommonUtil.checkDiskSpace(mContext, contentLength)) {
+			
+			DownloadItem item = new DownloadItem(++mItemId, 
+				contentLength, url);
+			mItems.add(item);
+			internalDownload(item);
 		}
-		
-		/*
-		if(CommonUtil.getExternalStorageFreeSpace() < contentLength) {
-			CommonUtil.showTips(mContext, R.string.diskspacenotengouth);
-			return;
+	}
+	
+	public void stop(DownloadItem item) {
+		for(DownloadAsyncTask task : mTasks) {
+			if(task.item() == item) {
+				task.cancel(true);
+				mTasks.remove(task);
+				break;
+			}
 		}
-		*/
+	}
+	
+	public void continueDownload(DownloadItem item) {
 		
-		DownloadItem item = new DownloadItem(++mItemId, contentLength, url);
-		mItems.add(item);
-		new DownloadAsyncTask(this).execute(item);
+		if(CommonUtil.checkDiskSpace(mContext, item.size())) {
+			internalDownload(item);
+		}
 	}
 	
 	public void onProgressUpdate(DownloadItem item) {
@@ -68,6 +79,17 @@ public final class DownloadManager {
 		if(null != mListener) {
 			mListener.onDownloadFinished(item);
 		}
+		
+		deleteDownloadTask(item);
+	}
+	
+	public void onDownloadStoped(DownloadItem item) {
+		
+		if(null != mListener) {
+			mListener.onDownloadStoped(item);
+		}
+		
+		deleteDownloadTask(item);
 	}
 	
 	public void setEventListener(Listener listener) {
@@ -76,6 +98,22 @@ public final class DownloadManager {
 	
 	public List<DownloadItem> getItems() {
 		return mItems;
+	}
+	
+	private void internalDownload(DownloadItem item) {
+		DownloadAsyncTask task = new DownloadAsyncTask(this);
+		task.execute(item);
+		mTasks.add(task);
+	}
+	
+	private void deleteDownloadTask(DownloadItem item) {
+		
+		for(DownloadAsyncTask task : mTasks) {
+			if(task.item() == item) {
+				mTasks.remove(task);
+				break;
+			}
+		}
 	}
 	
 	private void load() {

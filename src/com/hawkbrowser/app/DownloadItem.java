@@ -102,6 +102,7 @@ public class DownloadItem implements Serializable {
 	
 	@Override
 	public String toString() {
-		return String.format("DownloadItem: %s", mName);
+		return String.format("DownloadItem: %s, Status: %s", 
+			mName, mStatus);
 	}
 }

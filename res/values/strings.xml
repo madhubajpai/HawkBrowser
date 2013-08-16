@@ -37,5 +37,6 @@
     <string name="file_management">文件管理</string>
     <string name="download_ondownload">正在下载(%d)</string>
     <string name="download_downloadfinished">下载完成(%d)</string>
+    <string name="paused">暂停</string>
 
 </resources>

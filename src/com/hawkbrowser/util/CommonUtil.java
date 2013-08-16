@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import com.hawkbrowser.R;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -122,5 +124,23 @@ public class CommonUtil {
 		}
 		
 		return downloadDir.getPath();
+	}
+	
+	public static boolean checkDiskSpace(Context context, long contentLength) {
+		
+		String externalStorageState = Environment.getExternalStorageState(); 
+		if(!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+			CommonUtil.showTips(context, R.string.nosdcard);
+			return false;
+		}
+		
+		/*
+		if(CommonUtil.getExternalStorageFreeSpace() < contentLength) {
+			CommonUtil.showTips(mContext, R.string.diskspacenotengouth);
+			return;
+		}
+		*/
+		
+		return true;
 	}
 }

@@ -3,7 +3,6 @@ package com.hawkbrowser.app;
 import java.util.List;
 
 import com.hawkbrowser.R;
-import com.hawkbrowser.core.HawkWebView;
 import com.hawkbrowser.shell.HawkBrowser;
 
 import android.app.Activity;
@@ -153,13 +152,31 @@ public class DownloadActivity extends Activity
 		listView.expandGroup(mDownloadListAdapter.getGroupCount() - 1);
 	}
 	
+	@Override
+	public void onDownloadStoped(DownloadItem item) {
+		mDownloadListAdapter.notifyDataSetChanged();
+	}
+	
 	public void onDownloadItemClick(DownloadItem item) {
 		
-		if(null != item.localFilePath()) {
+		Log.d("download", String.format("onDownloadItemClick: %s, %s", 
+			item.name(), item.status()));
+		
+		switch(item.status()) {
+		case FINISHED:
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.parse("file://" + item.localFilePath()), 
 				"application/vnd.android.package-archive");
 			startActivity(intent);
+			break;
+			
+		case ONPROGRESS:
+			HawkBrowser.getDownloadMgr(this).stop(item);
+			break;
+			
+		case PAUSED:
+			HawkBrowser.getDownloadMgr(this).continueDownload(item);
+			break;
 		}
 	}
 	

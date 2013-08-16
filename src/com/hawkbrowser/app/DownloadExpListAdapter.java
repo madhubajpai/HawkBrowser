@@ -108,6 +108,8 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 			vg.findViewById(R.id.download_listitem_speed);
 		if(item.status() == DownloadItem.Status.FINISHED) {
 			speed.setVisibility(View.INVISIBLE);
+		} else if(item.status() == DownloadItem.Status.PAUSED){
+			speed.setText(R.string.paused);
 		} else {
 			speed.setText(String.format("%d KB/S", item.downloadSpeed()));
 		}
@@ -116,10 +118,13 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 			vg.findViewById(R.id.download_progressbar);
 		pb.setMax(100);
 		pb.setProgress((int)item.progress() * 100 / (int)item.size());
-		
-		Log.d("Download", String.format("Speed: %s, Progress: %d",
-			speed.getText(), pb.getProgress()));
-		
+			
+		if(item.status() == DownloadItem.Status.PAUSED) {
+			int color = mContext.getResources().getColor(
+				R.color.progressbar_pause_color);
+			pb.setBackgroundColor(color);
+		}
+				
 		return vg;
 	}
 

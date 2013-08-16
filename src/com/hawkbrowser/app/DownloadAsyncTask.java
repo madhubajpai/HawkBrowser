@@ -27,6 +27,10 @@ public class DownloadAsyncTask extends
 		mDownloadMgr = downloadMgr;
 	}
 	
+	public DownloadItem item() {
+		return mItem;
+	}
+	
 	protected DownloadItem doInBackground(DownloadItem... params) {
 		
 		InputStream httpStream = null;
@@ -41,6 +45,12 @@ public class DownloadAsyncTask extends
 			conn.setReadTimeout(READ_TIMEOUT);
 			conn.setConnectTimeout(CONNECT_TIMEOUT);
 			conn.setRequestMethod("GET");
+			
+			if(mItem.progress() > 0) {
+				String range = String.format("bytes=%d-", mItem.progress());
+				conn.setRequestProperty("Range", range);
+			}
+			
 			conn.setDoInput(true);
 			
 			conn.connect();
@@ -48,14 +58,17 @@ public class DownloadAsyncTask extends
 			Log.d("Download", String.format("Response code: %d, url %s", 
 					responseCode, mItem.url()));
 			
-			if(HttpStatus.SC_OK == responseCode) {
+			if(HttpStatus.SC_OK == responseCode || 
+				HttpStatus.SC_PARTIAL_CONTENT == responseCode) {
+				
 				httpStream = conn.getInputStream();
-				String localPath = saveToFile(mItem.name(), httpStream);
-				mItem.setLocalFilePath(localPath);
+				saveToFile(httpStream);
 				
 			} else {
 				mItem.setStatus(DownloadItem.Status.FAILED);
 			}
+			
+			conn.disconnect();
 			
 		} catch(Exception e) {
 			
@@ -78,35 +91,53 @@ public class DownloadAsyncTask extends
 	}
 	
 	protected void onPostExecute(DownloadItem item) {
-		item.setStatus(DownloadItem.Status.FINISHED);
+		Log.d("download", "onPoseExecute: " + item.name());
 		mDownloadMgr.onDownloadFinished(item);
 	}
 	
 	protected void onProgressUpdate(Integer... progress) {
-		
-		Log.d("Download", String.format("%s: onProgressUpdate: %d", 
-			mItem.name(), progress[0].longValue()));
-		
+				
 		mItem.setProgress(progress[0].longValue());
 		mDownloadMgr.onProgressUpdate(mItem);
 	}
 	
-	private String saveToFile(String fileName, InputStream inputStream) {
+	// This function is not called.......
+	@Override
+	protected void onCancelled(DownloadItem item) {
+		Log.d("download", "onCancelled: " + item.name());
+		mDownloadMgr.onDownloadStoped(item);
+	}
+	
+	
+	@Override
+	protected void onCancelled() {
+		mDownloadMgr.onDownloadStoped(mItem);
+	}
+	
+	
+	private void saveToFile(InputStream inputStream) {
 		
-		Log.d("Download", String.format("save to file: %s", fileName));
+		Log.d("Download", String.format("save to file: %s", mItem.name()));
 		String externalStorageState = Environment.getExternalStorageState();
 		if(!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-			return null;
+			mItem.setLocalFilePath(null);
+			return;
 		}
 		
-		
 		FileOutputStream fos = null;
-		File file = CommonUtil.getUniqueFile(
-			CommonUtil.getDownloadDataDir(), fileName);
+		File file = null;
+		
+		if(null != mItem.localFilePath()) {
+			file = new File(mItem.localFilePath());
+		} else {
+			file = CommonUtil.getUniqueFile(
+				CommonUtil.getDownloadDataDir(), mItem.name());
+		}
 		Log.d("Download", String.format("Output File: %s", file.getPath()));
 		
 		try {
-			fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file, mItem.progress() > 0);
+			mItem.setLocalFilePath(file.getPath());
 			byte[] buffer = new byte[4096];
 			int readLen = 0;
 			int totalReadLen = 0;
@@ -114,11 +145,15 @@ public class DownloadAsyncTask extends
 			long progressUpdateDistance = 300 * 1000 * 1000; // 200ms
 			
 			while((readLen = inputStream.read(buffer)) != -1) {
+				
+				if(isCancelled()) {
+					Log.d("download", "download cancel: " + mItem.name());
+					break;
+				}
+				
 				fos.write(buffer, 0, readLen);
 				totalReadLen += readLen;
-				Log.d("Download", String.format("%s: saveToFile: %d", 
-						fileName, readLen));
-				
+								
 				if(System.nanoTime() - timeLastProgressUpdate 
 						> progressUpdateDistance) {
 					publishProgress(totalReadLen);
@@ -133,6 +168,12 @@ public class DownloadAsyncTask extends
 			}
 			
 			fos.flush();
+			
+			if(isCancelled()) {
+				mItem.setStatus(DownloadItem.Status.PAUSED);
+			} else {
+				mItem.setStatus(DownloadItem.Status.FINISHED);
+			}
 			
 		} catch(Exception e) {
 			
@@ -150,7 +191,5 @@ public class DownloadAsyncTask extends
 				}
 			}
 		}
-		
-		return file.getPath();
 	}
 }
