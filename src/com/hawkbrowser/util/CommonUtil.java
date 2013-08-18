@@ -15,6 +15,7 @@ import android.os.StatFs;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 public class CommonUtil {
@@ -142,5 +143,20 @@ public class CommonUtil {
 		*/
 		
 		return true;
+	}
+	
+	public static String getMimeType(String path) {
+		
+		String type = "*/*";
+		
+		if(null != path) {
+			String ext = MimeTypeMap.getFileExtensionFromUrl(path);
+			if(null != ext) {
+				MimeTypeMap mime = MimeTypeMap.getSingleton();
+		        type = mime.getMimeTypeFromExtension(ext);
+			}
+		}
+		
+		return type;
 	}
 }

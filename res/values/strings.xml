@@ -38,5 +38,7 @@
     <string name="download_ondownload">正在下载(%d)</string>
     <string name="download_downloadfinished">下载完成(%d)</string>
     <string name="paused">暂停</string>
+    <string name="back_to_parent">返回上一级</string>
+    <string name="open_file_no_app">没找到应用程序打开此文件</string>
 
 </resources>

@@ -11,8 +11,9 @@
        android:layout_height="wrap_content"
        android:layout_gravity="left"
        android:layout_marginLeft="@dimen/history_folder_item_margin"
-       android:paddingTop="@dimen/history_item_padding"
-       android:paddingBottom="@dimen/history_item_padding"
+       android:paddingTop="@dimen/explistview_group_padding"
+       android:paddingBottom="@dimen/explistview_group_padding"
+       android:textSize="@dimen/explistview_group_fontsize"
        android:text="layouttest"  />
 
     <ImageView
@@ -23,8 +24,8 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="@dimen/history_folder_item_margin"
-        android:paddingTop="@dimen/history_item_padding"
-        android:paddingBottom="@dimen/history_item_padding"
+        android:paddingTop="@dimen/explistview_group_padding"
+        android:paddingBottom="@dimen/explistview_group_padding"
         android:src="@drawable/arrow_down" />
     
 </RelativeLayout>

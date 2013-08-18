@@ -45,7 +45,7 @@ public final class DownloadManager {
 			
 			DownloadItem item = new DownloadItem(++mItemId, 
 				contentLength, url);
-			mItems.add(item);
+			mItems.add(0, item);
 			internalDownload(item);
 		}
 	}
