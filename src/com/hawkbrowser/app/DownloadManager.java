@@ -55,9 +55,12 @@ public final class DownloadManager {
 			if(task.item() == item) {
 				task.cancel(true);
 				mTasks.remove(task);
-				break;
+				return;
 			}
 		}
+		
+		// if there is no task currently, we should set item status here
+		item.setStatus(DownloadItem.Status.PAUSED);
 	}
 	
 	public void continueDownload(DownloadItem item) {
@@ -76,6 +79,8 @@ public final class DownloadManager {
 	
 	public void onDownloadFinished(DownloadItem item) {
 		
+		item.setStatus(DownloadItem.Status.FINISHED);
+		
 		if(null != mListener) {
 			mListener.onDownloadFinished(item);
 		}
@@ -84,6 +89,8 @@ public final class DownloadManager {
 	}
 	
 	public void onDownloadStoped(DownloadItem item) {
+		
+		item.setStatus(DownloadItem.Status.PAUSED);
 		
 		if(null != mListener) {
 			mListener.onDownloadStoped(item);

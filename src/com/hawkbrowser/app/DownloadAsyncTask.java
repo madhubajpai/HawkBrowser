@@ -169,12 +169,6 @@ public class DownloadAsyncTask extends
 			
 			fos.flush();
 			
-			if(isCancelled()) {
-				mItem.setStatus(DownloadItem.Status.PAUSED);
-			} else {
-				mItem.setStatus(DownloadItem.Status.FINISHED);
-			}
-			
 		} catch(Exception e) {
 			
 			e.printStackTrace();

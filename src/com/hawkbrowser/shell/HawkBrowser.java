@@ -193,7 +193,7 @@ public final class HawkBrowser extends Activity
 		for(HawkWebView wv : mViews) {
 			
 			String title = wv.getTitle();
-			if(title.isEmpty()) {
+			if((null == title) || title.isEmpty()) {
 				title = getResources().getString(R.string.defaultpagetitle);
 			}
 			

@@ -102,7 +102,8 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 		
 		TextView size = (TextView)
 			vg.findViewById(R.id.download_listitem_size);
-		size.setText(String.format("%d KB", item.size() / 1024));
+		size.setText(String.format("%d KB/%d KB", 
+			item.size() / 1024, item.progress() / 1024));
 		
 		TextView speed = (TextView)
 			vg.findViewById(R.id.download_listitem_speed);
