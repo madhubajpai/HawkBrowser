@@ -107,6 +107,12 @@ public final class DownloadManager {
 		return mItems;
 	}
 	
+	public void deleteDownloadItem(DownloadItem item) {
+		
+		deleteDownloadTask(item);
+		mItems.remove(item);
+	}
+	
 	private void internalDownload(DownloadItem item) {
 		DownloadAsyncTask task = new DownloadAsyncTask(this);
 		task.execute(item);

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,19 +26,38 @@ public class FileListAdapter extends BaseAdapter
 	implements AdapterView.OnItemClickListener {
 	
 	private List<File> mFiles;
+	private List<File> mCheckedItems;
 	private Context mContext;
 	private Listener mListener;
+	private boolean mIsInEditMode;
 	
 	public static interface Listener {
 		void onFileItemClick(File file);
+		void onFileItemChecked(File file);
 	}
 	
 	public FileListAdapter(Context context, File currentFolder) {
+		
+		mIsInEditMode = false;
 		mContext = context;
 		setData(currentFolder);
 	}
 	
+	public void setEditable(boolean bEditable) {
+		mIsInEditMode = bEditable;
+	}
+	
+	public boolean getEditable() {
+		return mIsInEditMode;
+	}
+	
+	public List<File> getCheckedItems() {
+		return mCheckedItems;
+	}
+	
 	public void setData(File currentFolder) {
+		
+		mCheckedItems = new ArrayList<File>();
 		
 		File[] files = currentFolder.listFiles(new FileFilter() {
 			@Override
@@ -89,9 +109,27 @@ public class FileListAdapter extends BaseAdapter
 	public void onItemClick(AdapterView<?> parent, 
 			View view, int position, long id) {
 		
-		if(null != mListener) {
-			mListener.onFileItemClick(mFiles.get(position));
-		}
+		ViewGroup vg = (ViewGroup)view;
+		
+		if(mIsInEditMode) {
+			CheckBox cb = (CheckBox)vg.findViewById(R.id.file_item_check);
+			cb.setChecked(!cb.isChecked());
+			
+			if(cb.isChecked()) {
+				mCheckedItems.add(mFiles.get(position));
+			} else {
+				mCheckedItems.remove(mFiles.get(position));
+			}
+			
+			if(null != mListener) {
+				mListener.onFileItemChecked(mFiles.get(position));
+			}
+			
+		} else {
+			if(null != mListener) {
+				mListener.onFileItemClick(mFiles.get(position));
+			}
+		}		
 	}
 	
 	@Override
@@ -124,7 +162,7 @@ public class FileListAdapter extends BaseAdapter
 			itemView = (ViewGroup) 
 				inflater.inflate(R.layout.file_list_item, null);
 		}
-		
+				
 		ImageView itemIcon = (ImageView) 
 			itemView.findViewById(R.id.file_item_icon);
 		TextView itemName = (TextView)
@@ -133,13 +171,16 @@ public class FileListAdapter extends BaseAdapter
 			itemView.findViewById(R.id.file_item_arrow);
 		
 		File file = mFiles.get(position);
+		View check = itemView.findViewById(R.id.file_item_check);
 		
 		if(null == file) {
 			itemIcon.setImageResource(R.drawable.icon_up_dir);
 			itemName.setText(R.string.back_to_parent);
 			arrowIcon.setVisibility(View.GONE);
+			check.setVisibility(View.GONE);
 		} else {
 			itemName.setText(file.getName());
+			check.setVisibility(mIsInEditMode ? View.VISIBLE : View.GONE);
 			
 			if(file.isDirectory()) {
 				itemIcon.setImageResource(R.drawable.icon_folder);

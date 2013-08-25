@@ -40,5 +40,13 @@
     <string name="paused">暂停</string>
     <string name="back_to_parent">返回上一级</string>
     <string name="open_file_no_app">没找到应用程序打开此文件</string>
+    <string name="finish">完成</string>
+    <string name="redownload">重新下载</string>
+    <string name="delete">删除</string>
+    <string name="confirm_delet_file">确认删除此文件?</string>
+    <string name="confirm_delete_task">确认删除此任务?</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    <string name="delete_file_same_time">同时删除下载文件</string>
 
 </resources>

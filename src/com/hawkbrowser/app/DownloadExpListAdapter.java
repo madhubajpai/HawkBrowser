@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,10 +28,13 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 	
 	private DownloadActivity mContext;
 	private List< List<DownloadItem> > mGroupItems;
+	private List<DownloadItem> mCheckedItems;
+	private boolean mIsInEditMode;
 	
 	public DownloadExpListAdapter(DownloadActivity context, 
 		List<DownloadItem> items) { 
 		
+		mIsInEditMode = false;
 		mContext = context;
 		setData(items);
 		
@@ -38,6 +42,7 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 	
 	public void setData(List<DownloadItem> items) {
 
+		mCheckedItems = new ArrayList<DownloadItem>();
 		mGroupItems = new ArrayList< List<DownloadItem> >();
 		
 		ArrayList<DownloadItem> onProgress = new ArrayList<DownloadItem>();
@@ -57,12 +62,44 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 		mGroupItems.add(onFinished);
 	}
 	
+	public void setEditable(boolean bEditable) {
+		mIsInEditMode = bEditable;
+	}
+	
+	public boolean getEditable() {
+		return mIsInEditMode;
+	}
+	
+	public List<DownloadItem> getCheckedItems() {
+		return mCheckedItems;
+	}
+	
 	@Override
 	public boolean onChildClick(ExpandableListView parent, 
 		View v, int groupPosition, int childPosition, long id) {
 		
-		DownloadItem item = mGroupItems.get(groupPosition).get(childPosition); 
-		mContext.onDownloadItemClick(item);
+		ViewGroup vg = (ViewGroup)v;
+		
+		if(mIsInEditMode) {
+			CheckBox cb = (CheckBox)vg.findViewById(R.id.download_item_check);
+			cb.setChecked(!cb.isChecked());
+
+			DownloadItem item = 
+					mGroupItems.get(groupPosition).get(childPosition); 
+			
+			if(cb.isChecked()) {
+				mCheckedItems.add(item);
+			} else {
+				mCheckedItems.remove(item);
+			}
+			
+			mContext.onDownloadItemChecked(item);
+			
+		} else {
+			DownloadItem item = 
+				mGroupItems.get(groupPosition).get(childPosition); 
+			mContext.onDownloadItemClick(item);
+		}
 		
 		return true;
 	}
@@ -94,6 +131,9 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 			vg = (ViewGroup) LayoutInflater.from(mContext).inflate(
 					R.layout.download_list_item, null);
 		}
+		
+		View check = vg.findViewById(R.id.download_item_check);
+		check.setVisibility(mIsInEditMode ? View.VISIBLE : View.GONE);
 		
 		DownloadItem item = mGroupItems.get(groupPosition).get(childPosition);
 		TextView name = (TextView) 

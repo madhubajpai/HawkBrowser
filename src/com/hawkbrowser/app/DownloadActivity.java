@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.base.AlertDialogCheck;
 import com.hawkbrowser.shell.HawkBrowser;
 import com.hawkbrowser.util.CommonUtil;
 
@@ -22,6 +23,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -31,7 +34,7 @@ import android.widget.TabHost.TabSpec;
 
 public class DownloadActivity extends Activity 
 	implements DownloadManager.Listener,
-		FileListAdapter.Listener {
+		FileListAdapter.Listener, View.OnClickListener {
 	
 	private static final String DOWNLOAD_TAB_ID = "download";
 	private static final String FILE_TAB_ID = "file";
@@ -41,7 +44,7 @@ public class DownloadActivity extends Activity
 	private File mCurrentFolder;
 	private DownloadExpListAdapter mDownloadListAdapter;
 	private FileListAdapter mFileListAdapter;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,22 +94,133 @@ public class DownloadActivity extends Activity
 						lineView.setVisibility(View.VISIBLE);
 					}
 				}
-				
+								
 				if(tabId.equals(FILE_TAB_ID) && (null == mCurrentFolder)) {
 					loadFileSystem();
 				}
+				
+				boolean toolbarViewEditable = false;
+				if(tabId.equals(DOWNLOAD_TAB_ID)) {
+					toolbarViewEditable = mDownloadListAdapter.getEditable();
+				} else {
+					toolbarViewEditable = mFileListAdapter.getEditable();
+				}
+				
+				refreshToolbarView(toolbarViewEditable);
 			}
 		});
 		
 		View back = mTabHost.findViewById(R.id.download_return);
-		back.setOnClickListener(new View.OnClickListener() {
+		back.setOnClickListener(this);
+		
+		View management = mTabHost.findViewById(R.id.download_management);
+		management.setOnClickListener(this);
+		
+		View finish = mTabHost.findViewById(R.id.download_finish);
+		finish.setOnClickListener(this);
+		
+		View delete = mTabHost.findViewById(R.id.download_deletetask);
+		delete.setOnClickListener(this);
+	}
+	
+	// View.onClickListener
+	@Override
+	public void onClick(View v) {
+		
+		switch(v.getId()) {
+		case R.id.download_return:
+			finish();
+			return;
 			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				finish();
+		case R.id.download_management:
+			refreshToolbarView(true);
+			refreshAdapterView(true);
+			return;
+			
+		case R.id.download_finish:
+			refreshToolbarView(false);
+			refreshAdapterView(false);
+			return;
+			
+		case R.id.download_deletetask:
+			deleteItems();
+			return;
+		}
+	}
+	
+	private void deleteItems() {
+		
+		if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
+			
+			AlertDialogCheck dlg = new AlertDialogCheck(
+				R.string.confirm_delete_task, R.string.ok, R.string.cancel);
+			dlg.show(dlg.getFragmentManager(), "DeleteDownloadTask");
+			
+			if(dlg.isConfirmed()) {
+				List<DownloadItem> items = 
+					mDownloadListAdapter.getCheckedItems();
+				for(DownloadItem item : items) {
+					HawkBrowser.getDownloadMgr(this).deleteDownloadItem(item);
+					
+					if(dlg.isChecked()) {
+						File f = new File(item.localFilePath());
+						f.delete();
+						loadFileSystem();
+					}
+				}
+				
+				loadDownloadItems();
 			}
-		});
+			
+		} else {
+			
+			boolean bConfirm = CommonUtil.showDialog(this, 
+				R.string.confirm_delet_file, R.string.ok, R.string.cancel);
+			
+			if(bConfirm) {
+				List<File> files = mFileListAdapter.getCheckedItems();
+				for(File f : files) {
+					CommonUtil.deleteFile(f);
+				}
+				
+				loadFileSystem();
+			}
+		}
+	}
+	
+	private void refreshToolbarView(boolean bEditable) {
+		
+		View toolBarShow = mTabHost.findViewById(R.id.download_show_view);
+		toolBarShow.setVisibility(bEditable ? View.GONE : View.VISIBLE);
+		
+		View toolBar = mTabHost.findViewById(R.id.download_management_view);
+		toolBar.setVisibility(bEditable ? View.VISIBLE : View.GONE);
+		
+		Button delete = (Button) 
+			mTabHost.findViewById(R.id.download_deletetask);
+		View reDownload = mTabHost.findViewById(R.id.download_redownload);
+				
+		if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
+			reDownload.setVisibility(View.VISIBLE);
+			delete.setEnabled(
+				mDownloadListAdapter.getCheckedItems().size() > 0);
+			
+		} else {
+			reDownload.setVisibility(View.INVISIBLE);
+			delete.setEnabled(
+				mFileListAdapter.getCheckedItems().size() > 0);
+		}
+	}
+	
+	private void refreshAdapterView(boolean bEditable) {
+		
+		if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
+			mDownloadListAdapter.setEditable(bEditable);
+			mDownloadListAdapter.notifyDataSetChanged();
+		} else {
+			mFileListAdapter.setEditable(bEditable);
+			mFileListAdapter.notifyDataSetChanged();
+		}
 	}
 	
 	private View getCustomTab(String title, boolean isSelectable) {
@@ -234,6 +348,15 @@ public class DownloadActivity extends Activity
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void onFileItemChecked(File file) {
+		refreshToolbarView(true);
+	}
+	
+	public void onDownloadItemChecked(DownloadItem item) {
+		refreshToolbarView(true);
 	}
 	
 	protected void onStart() {
