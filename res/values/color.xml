@@ -9,4 +9,5 @@
     <color name="tab_widget_line_color">#33B5E5</color>
     <color name="progressbar_color">#00CC66</color>
     <color name="progressbar_pause_color">#CCCCCC</color>
+    <color name="light_sky_blue">#1E90FF</color>
 </resources>

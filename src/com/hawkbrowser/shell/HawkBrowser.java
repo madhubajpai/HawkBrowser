@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.hawkbrowser.R;
 import com.hawkbrowser.app.*;
+import com.hawkbrowser.app.DownloadDialog.Param;
 import com.hawkbrowser.core.*;
 import com.hawkbrowser.util.*;
 
@@ -328,14 +329,24 @@ public final class HawkBrowser extends Activity
 		
 		Log.d("Download", String.format("download: %s", url));
 		
-		/*
-		Uri uri = Uri.parse(url);
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		startActivity(intent);
-		*/
+		DownloadDialog.Param param = new DownloadDialog.Param(url, userAgent, 
+			contentDisposition, mimetype, contentLength, this);
 		
-		getDownloadMgr(this).Download(url, userAgent, 
-			contentDisposition, mimetype, contentLength);
+		DownloadDialog dlg = new DownloadDialog(param, 
+			new DownloadDialog.Listener() {
+			
+			@Override
+			public void onClick(boolean isConfirmed, String newName, 
+				Param param) {
+				if(isConfirmed) {
+					getDownloadMgr(param.mContext).Download(param.mUrl, 
+						param.mUserAgent, newName, param.mContentDisposition,
+						param.mMimeType, param.mSize);	
+				}
+			}
+		});
+		
+		dlg.show();
 	}
 	
 	// PopMenuBar Listener begin

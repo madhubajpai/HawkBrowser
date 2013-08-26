@@ -38,13 +38,13 @@ public final class DownloadManager {
 		load();
 	}
 	
-	public void Download(String url, String userAgent, 
+	public void Download(String url, String userAgent, String fileName, 
 		String contentDisposition, String mimetype, long contentLength) {
 		
 		if(CommonUtil.checkDiskSpace(mContext, contentLength)) {
 			
 			DownloadItem item = new DownloadItem(++mItemId, 
-				contentLength, url);
+				contentLength, url, fileName);
 			mItems.add(0, item);
 			internalDownload(item);
 		}

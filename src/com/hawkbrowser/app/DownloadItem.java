@@ -28,7 +28,7 @@ public class DownloadItem implements Serializable {
 	transient private long mLastSetProgressTime;
 	transient private long mSpeed; 
 
-	public DownloadItem(int id, long length, String url) {
+	public DownloadItem(int id, long length, String url, String fileName) {
 		mId = id;
 		mProgress = 0;
 		mLength = length;
@@ -36,7 +36,11 @@ public class DownloadItem implements Serializable {
 		mStatus = Status.NOTSTARTED;
 		mSpeed = 0;
 		mLastSetProgressTime = 0;
-		mName = CommonUtil.fileNameFromUrl(url);
+		mName = fileName;
+		
+		if(null == mName) {
+			CommonUtil.fileNameFromUrl(url);
+		}
 	}
 	
 	public void setProgress(long progress) {
