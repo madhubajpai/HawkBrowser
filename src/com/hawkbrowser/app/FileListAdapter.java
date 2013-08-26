@@ -55,6 +55,10 @@ public class FileListAdapter extends BaseAdapter
 		return mCheckedItems;
 	}
 	
+	public List<File> getAllItems() {
+		return mFiles;
+	}
+	
 	public void setData(File currentFolder) {
 		
 		mCheckedItems = new ArrayList<File>();
@@ -95,9 +99,12 @@ public class FileListAdapter extends BaseAdapter
 			});
 		}
 		
-		File rootFile = Environment.getExternalStorageDirectory();
-		if(!rootFile.equals(currentFolder)) {
-			mFiles.add(0, null);
+		// In edit mode, don't need "go to up dir" item
+		if(!mIsInEditMode) {
+			File rootFile = Environment.getExternalStorageDirectory();
+			if(!rootFile.equals(currentFolder)) {
+				mFiles.add(0, null);
+			}
 		}
 	}
 		
@@ -154,14 +161,10 @@ public class FileListAdapter extends BaseAdapter
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		
-		ViewGroup itemView = (ViewGroup) convertView;
-		
-		if(null == itemView) {
-			LayoutInflater inflater = LayoutInflater.from(mContext);
-			itemView = (ViewGroup) 
-				inflater.inflate(R.layout.file_list_item, null);
-		}
+			
+		LayoutInflater inflater = LayoutInflater.from(mContext);
+		ViewGroup itemView = (ViewGroup) 
+			inflater.inflate(R.layout.file_list_item, null);
 				
 		ImageView itemIcon = (ImageView) 
 			itemView.findViewById(R.id.file_item_icon);

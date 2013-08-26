@@ -12,6 +12,7 @@
         android:layout_marginLeft="@dimen/listview_item_marginleft"
         android:visibility="gone"
         android:checked="false"
+        android:clickable="false"
         android:focusable="false" />
 
     <ImageView

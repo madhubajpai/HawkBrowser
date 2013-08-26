@@ -162,25 +162,10 @@ public class CommonUtil {
 		return type;
 	}
 	
-	public static boolean showDialog(Context context, int msgResId, 
-		int positiveBtnTextId, int negativeBtnTextId) {
+	public static void showDialog(Context context, int msgResId, 
+		int positiveBtnTextId, int negativeBtnTextId, 
+		DialogInterface.OnClickListener listener) {
 		
-		class DialogListener implements DialogInterface.OnClickListener {
-			
-			private int mResultClickedBtn = 0;
-			
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				// TODO Auto-generated method stub
-				mResultClickedBtn = id;
-			}
-			
-			public int getClickedButtenId() {
-				return mResultClickedBtn;
-			}
-		}
-		
-		DialogListener listener = new DialogListener();
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		
 		builder.setMessage(msgResId);
@@ -189,30 +174,25 @@ public class CommonUtil {
 		
 		AlertDialog dlg = builder.create();
 		dlg.show();
-		
-		
-		return listener.getClickedButtenId() == DialogInterface.BUTTON_POSITIVE;
 	}
 	
 	public static boolean deleteFile(File f) {
 		if(null == f) {
 			return true;
 		}
-		
-		if(f.isFile()) {
-			return f.delete();
-		}
-		
+				
 		boolean bSuccess = true;
 		
-		File[] children = f.listFiles();
-		
-		if((null != children) && children.length > 0) {
-			for(File child : children) {
-				bSuccess = bSuccess && deleteFile(child);
+		if(f.isDirectory()) {
+			File[] children = f.listFiles();
+			
+			if((null != children) && children.length > 0) {
+				for(File child : children) {
+					bSuccess = bSuccess && deleteFile(child);
+				}
 			}
 		}
 		
-		return bSuccess;
+		return bSuccess && f.delete();
 	}
 }

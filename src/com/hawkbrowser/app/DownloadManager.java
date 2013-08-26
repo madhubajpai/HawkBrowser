@@ -107,6 +107,18 @@ public final class DownloadManager {
 		return mItems;
 	}
 	
+	public List<DownloadItem> getNonActiveItems() {
+		List<DownloadItem> items = new ArrayList<DownloadItem>();
+		
+		for(DownloadItem item : mItems) {
+			if(item.status() != DownloadItem.Status.ONPROGRESS) {
+				items.add(item);
+			}
+		}
+		
+		return items;
+	}
+	
 	public void deleteDownloadItem(DownloadItem item) {
 		
 		deleteDownloadTask(item);

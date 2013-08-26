@@ -12,6 +12,7 @@
         android:layout_gravity="center"
         android:visibility="gone"
         android:focusable="false"
+        android:clickable="false"
         android:checked="false" />
     
     <ImageView

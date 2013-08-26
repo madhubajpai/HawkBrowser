@@ -14,17 +14,16 @@ import com.hawkbrowser.util.CommonUtil;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -44,12 +43,16 @@ public class DownloadActivity extends Activity
 	private File mCurrentFolder;
 	private DownloadExpListAdapter mDownloadListAdapter;
 	private FileListAdapter mFileListAdapter;
+	private DownloadManager mDownloadManager;
+	private List<DownloadItem> mItemsToBeDelete;
+	private List<File> mFilesToBeDelete;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.download);
+		mDownloadManager = HawkBrowser.getDownloadMgr(this);
 		initLayout();
 		setupListeners();
 		loadDownloadItems();
@@ -121,6 +124,9 @@ public class DownloadActivity extends Activity
 		
 		View delete = mTabHost.findViewById(R.id.download_deletetask);
 		delete.setOnClickListener(this);
+		
+		View clear = mTabHost.findViewById(R.id.download_clear);
+		clear.setOnClickListener(this);
 	}
 	
 	// View.onClickListener
@@ -143,9 +149,74 @@ public class DownloadActivity extends Activity
 			return;
 			
 		case R.id.download_deletetask:
-			deleteItems();
+			if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
+				mItemsToBeDelete = mDownloadListAdapter.getCheckedItems();
+				deleteDownloadItems();
+			} else {
+				mFilesToBeDelete = mFileListAdapter.getCheckedItems();
+				deleteFiles();
+			}
+			return;
+			
+		case R.id.download_clear:
+			if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
+				mItemsToBeDelete = mDownloadManager.getNonActiveItems();
+				deleteDownloadItems();
+			} else {
+				mFilesToBeDelete = mFileListAdapter.getAllItems();
+				deleteFiles();
+			}
 			return;
 		}
+	}
+	
+	private void deleteDownloadItems() {
+		
+		AlertDialogCheck dlg = new AlertDialogCheck(
+			R.string.confirm_delete_task, R.string.ok, R.string.cancel, 
+			new AlertDialogCheck.Listener() {
+				@Override
+				public void onClick(boolean isConfirmed, 
+					boolean isChecked) {
+					// TODO Auto-generated method stub
+					if(isConfirmed) {
+						for(DownloadItem item : mItemsToBeDelete) {
+							mDownloadManager.deleteDownloadItem(item);
+							
+							if(isChecked) {
+								File f = new File(item.localFilePath());
+								f.delete();
+							}
+						}
+						
+						if(isChecked) {
+							loadFileSystem();
+						}
+						
+						loadDownloadItems();
+					}
+				}
+			});
+		dlg.show(this);
+	}
+	
+	private void deleteFiles() {
+		CommonUtil.showDialog(this, R.string.confirm_delet_file, 
+			R.string.ok, R.string.cancel, 
+			new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int btn) {
+					// TODO Auto-generated method stub
+					if(DialogInterface.BUTTON_POSITIVE == btn) {
+						for(File f : mFilesToBeDelete) {
+							CommonUtil.deleteFile(f);
+						}
+						
+						loadFileSystem();
+					}
+				}
+			});
 	}
 	
 	private void deleteItems() {
@@ -153,38 +224,52 @@ public class DownloadActivity extends Activity
 		if(mTabHost.getCurrentTabTag().equals(DOWNLOAD_TAB_ID)) {
 			
 			AlertDialogCheck dlg = new AlertDialogCheck(
-				R.string.confirm_delete_task, R.string.ok, R.string.cancel);
-			dlg.show(dlg.getFragmentManager(), "DeleteDownloadTask");
-			
-			if(dlg.isConfirmed()) {
-				List<DownloadItem> items = 
-					mDownloadListAdapter.getCheckedItems();
-				for(DownloadItem item : items) {
-					HawkBrowser.getDownloadMgr(this).deleteDownloadItem(item);
-					
-					if(dlg.isChecked()) {
-						File f = new File(item.localFilePath());
-						f.delete();
-						loadFileSystem();
+				R.string.confirm_delete_task, R.string.ok, R.string.cancel, 
+				new AlertDialogCheck.Listener() {
+					@Override
+					public void onClick(boolean isConfirmed, 
+						boolean isChecked) {
+						// TODO Auto-generated method stub
+						if(isConfirmed) {
+							List<DownloadItem> items = 
+									mDownloadListAdapter.getCheckedItems();
+							for(DownloadItem item : items) {
+								mDownloadManager.deleteDownloadItem(item);
+								
+								if(isChecked) {
+									File f = new File(item.localFilePath());
+									f.delete();
+								}
+							}
+							
+							if(isChecked) {
+								loadFileSystem();
+							}
+							
+							loadDownloadItems();
+						}
 					}
-				}
-				
-				loadDownloadItems();
-			}
+				});
+			dlg.show(this);
 			
 		} else {
 			
-			boolean bConfirm = CommonUtil.showDialog(this, 
-				R.string.confirm_delet_file, R.string.ok, R.string.cancel);
-			
-			if(bConfirm) {
-				List<File> files = mFileListAdapter.getCheckedItems();
-				for(File f : files) {
-					CommonUtil.deleteFile(f);
-				}
-				
-				loadFileSystem();
-			}
+			CommonUtil.showDialog(this, R.string.confirm_delet_file, 
+				R.string.ok, R.string.cancel, 
+				new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int btn) {
+						// TODO Auto-generated method stub
+						if(DialogInterface.BUTTON_POSITIVE == btn) {
+							for(File f : mFileListAdapter.getCheckedItems()) {
+								CommonUtil.deleteFile(f);
+							}
+							
+							loadFileSystem();
+						}
+					}
+				});
 		}
 	}
 	
@@ -219,6 +304,7 @@ public class DownloadActivity extends Activity
 			mDownloadListAdapter.notifyDataSetChanged();
 		} else {
 			mFileListAdapter.setEditable(bEditable);
+			mFileListAdapter.setData(mCurrentFolder);
 			mFileListAdapter.notifyDataSetChanged();
 		}
 	}
@@ -241,8 +327,7 @@ public class DownloadActivity extends Activity
 	
 	private void loadDownloadItems() {
 		
-		List<DownloadItem> items = 
-			HawkBrowser.getDownloadMgr(this).getItems();
+		List<DownloadItem> items = mDownloadManager.getItems();
 		
 		mDownloadListAdapter = new DownloadExpListAdapter(this, items);
 			
@@ -283,8 +368,7 @@ public class DownloadActivity extends Activity
 	
 	@Override
 	public void onDownloadFinished(DownloadItem item) {
-		List<DownloadItem> items = 
-				HawkBrowser.getDownloadMgr(this).getItems();
+		List<DownloadItem> items = mDownloadManager.getItems();
 		mDownloadListAdapter.setData(items);
 		mDownloadListAdapter.notifyDataSetChanged();
 		
@@ -313,11 +397,11 @@ public class DownloadActivity extends Activity
 			break;
 			
 		case ONPROGRESS:
-			HawkBrowser.getDownloadMgr(this).stop(item);
+			mDownloadManager.stop(item);
 			break;
 			
 		case PAUSED:
-			HawkBrowser.getDownloadMgr(this).continueDownload(item);
+			mDownloadManager.continueDownload(item);
 			break;
 		}
 	}
@@ -362,28 +446,28 @@ public class DownloadActivity extends Activity
 	protected void onStart() {
 		super.onStart();
 		
-		HawkBrowser.getDownloadMgr(this).setEventListener(this);
+		mDownloadManager.setEventListener(this);
 	}
 	
     @Override
     protected void onResume() {
         super.onResume();
         
-		HawkBrowser.getDownloadMgr(this).setEventListener(this);
+        mDownloadManager.setEventListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         
-        HawkBrowser.getDownloadMgr(this).setEventListener(null);
+        mDownloadManager.setEventListener(null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         
-        HawkBrowser.getDownloadMgr(this).setEventListener(null);
+        mDownloadManager.setEventListener(null);
     }
 
 }
