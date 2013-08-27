@@ -397,6 +397,14 @@ public final class HawkBrowser extends Activity
 		bm.Flush();
 	}
 	
+	public void onShowSetting() {
+		mPopMenuBar.dismiss();
+		mPopMenuBar = null;
+		
+		Intent intent = new Intent(this, SettingActivity.class);
+		startActivity(intent);
+	}
+	
 	public static History getHistory(Context context) {	
 		if(null == mHistory) {
 			mHistory = new History(context);

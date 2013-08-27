@@ -24,6 +24,7 @@ public class PopMenuBar implements View.OnClickListener {
 		void onAddBookmark();
 		void onShowBookmark();
 		void onShowDownloadMgr();
+		void onShowSetting();
 	}	
 	
 	public PopMenuBar(Context context) {
@@ -63,6 +64,9 @@ public class PopMenuBar implements View.OnClickListener {
 		
 		View download = mView.findViewById(R.id.popmenu_downloadmanager);
 		download.setOnClickListener(this);
+		
+		View setting = mView.findViewById(R.id.popmenu_systemsetting);
+		setting.setOnClickListener(this);
 	}
 	
 	@Override
@@ -91,6 +95,10 @@ public class PopMenuBar implements View.OnClickListener {
 				
 			case R.id.popmenu_downloadmanager:
 				mListener.onShowDownloadMgr();
+				break;
+				
+			case R.id.popmenu_systemsetting:
+				mListener.onShowSetting();
 				break;
 		}
 	}

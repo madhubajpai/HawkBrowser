@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/light_sky_blue"
-        android:padding="5dp"
+        android:padding="@dimen/top_title_padding"
         android:gravity="center"
         android:text="@string/file_download"
         android:textColor="@android:color/white"

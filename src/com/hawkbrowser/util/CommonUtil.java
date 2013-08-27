@@ -24,6 +24,7 @@ public class CommonUtil {
 	
 	public final static String ROOT_DATA_DIR = "hawkbrowser";
 	public final static String DOWNLOAD_DIR = "download";
+	public final static String BROWSER_CACHE_DIR = "cache";
 
 	public static void showTips(Context ctx, String msg) {
 		int duration = Toast.LENGTH_SHORT;
@@ -127,6 +128,16 @@ public class CommonUtil {
 		}
 		
 		return downloadDir.getPath();
+	}
+	
+	public static File getCacheDir() {
+		File cacheDir = new File(getOurExtDataDir(), BROWSER_CACHE_DIR);
+		
+		if(!cacheDir.exists()) {
+			cacheDir.mkdir();
+		}
+		
+		return cacheDir;
 	}
 	
 	public static boolean checkDiskSpace(Context context, long contentLength) {

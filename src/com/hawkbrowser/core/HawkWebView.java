@@ -3,6 +3,7 @@ package com.hawkbrowser.core;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -27,9 +28,25 @@ public class HawkWebView extends WebView {
 	public void init(WebViewClient viewClient, 
 			HawkWebChromeClient chromeClient) {
 		
-		getSettings().setJavaScriptEnabled(true);
+		WebSettings setting = getSettings();
+		
+		String rawUserAgent = setting.getUserAgentString();
+		rawUserAgent = getUserAgent(rawUserAgent);
+		setting.setUserAgentString(rawUserAgent);
+		
+		setting.setJavaScriptEnabled(true);
 		setWebViewClient(viewClient);
 		setWebChromeClient(chromeClient);
 		requestFocusFromTouch();
+	}
+	
+	private String getUserAgent(String rawUserAgent) {
+		int pos = rawUserAgent.lastIndexOf("Mobile Safari");
+		
+		if(-1 != pos) {
+			return rawUserAgent.substring(0, pos) + "HawkBrowser/1.0";
+		} else {
+			return rawUserAgent;
+		}
 	}
 }
