@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.hawkbrowser.R;
 import com.hawkbrowser.base.AlertDialogCheck;
+import com.hawkbrowser.base.MimeManager;
 import com.hawkbrowser.shell.HawkBrowser;
 import com.hawkbrowser.util.CommonUtil;
 
@@ -424,7 +425,7 @@ public class DownloadActivity extends Activity
 					Intent intent = new Intent(Intent.ACTION_VIEW);
 					intent.setDataAndType(
 						Uri.parse("file://" + file.getPath()),
-						CommonUtil.getMimeType(file.getPath()));
+						MimeManager.instance().getMimeType(file.getPath()));
 					startActivity(intent);
 				} catch(ActivityNotFoundException e) {
 					e.printStackTrace();

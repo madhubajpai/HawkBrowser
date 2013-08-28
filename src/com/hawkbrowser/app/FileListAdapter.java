@@ -8,9 +8,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.base.MimeManager;
 import com.hawkbrowser.util.CommonUtil;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -189,7 +191,16 @@ public class FileListAdapter extends BaseAdapter
 				itemIcon.setImageResource(R.drawable.icon_folder);
 				arrowIcon.setVisibility(View.VISIBLE);
 			} else {
-				itemIcon.setImageResource(R.drawable.icon_file);
+				
+				Drawable icon = MimeManager.instance().getDrawable(mContext, 
+					file.getPath());
+				
+				if(null != icon) {
+					itemIcon.setImageDrawable(icon);
+				} else {
+					itemIcon.setImageResource(R.drawable.icon_file);
+				}
+				
 				arrowIcon.setVisibility(View.GONE);
 			}
 		}

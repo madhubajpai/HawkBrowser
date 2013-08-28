@@ -71,6 +71,13 @@ public final class HawkBrowser extends Activity
 		//		(LayoutInflater) getLayoutInflater();
 		// View navigationBar = layoutInflater.inflate(R.layout.main_frame, null);
 		
+		String homePage = getResources().getString(R.string.homepageurl);
+
+		Uri uri = getIntent().getData();
+		if((null != uri) && uri.getScheme().startsWith("http")) {
+			homePage = uri.toString().toString();
+		}
+		
 		mViews = new ArrayList<HawkWebView>();
 		
 		ViewGroup navigationBar = 
@@ -84,7 +91,7 @@ public final class HawkBrowser extends Activity
 		newView.init(new HawkWebViewClient(this), 
 			new HawkWebChromeClient(this));
 		newView.setDownloadListener(this);
-		newView.loadUrl(getResources().getString(R.string.homepageurl));
+		newView.loadUrl(homePage);
 		showView(newView);
 		
 		ViewGroup addressBarView = (ViewGroup) 
@@ -488,6 +495,11 @@ public final class HawkBrowser extends Activity
     		
     		if(url != null) {
     			newWebView(url);
+    		}
+    	} else {
+    		Uri uri = intent.getData();
+    		if(uri.getScheme().startsWith("http")) {
+    			newWebView(uri.toString());
     		}
     	}
     }

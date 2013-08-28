@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.hawkbrowser.R;
+import com.hawkbrowser.base.MimeManager;
+import com.hawkbrowser.util.CommonUtil;
 
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -164,7 +167,18 @@ public class DownloadExpListAdapter extends BaseExpandableListAdapter
 			int color = mContext.getResources().getColor(
 				R.color.progressbar_pause_color);
 			pb.setBackgroundColor(color);
+		} else if(item.status() == DownloadItem.Status.FINISHED) {
+			
+			ImageView iv = (ImageView) 
+				vg.findViewById(R.id.download_list_item_icon);
+			Drawable icon = MimeManager.instance().getDrawable(mContext, 
+				item.localFilePath());
+			
+			if(null != icon) {
+				iv.setImageDrawable(icon);
+			}
 		}
+		
 				
 		return vg;
 	}

@@ -10,8 +10,12 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -158,21 +162,6 @@ public class CommonUtil {
 		return true;
 	}
 	
-	public static String getMimeType(String path) {
-		
-		String type = "*/*";
-		
-		if(null != path) {
-			String ext = MimeTypeMap.getFileExtensionFromUrl(path);
-			if(null != ext) {
-				MimeTypeMap mime = MimeTypeMap.getSingleton();
-		        type = mime.getMimeTypeFromExtension(ext);
-			}
-		}
-		
-		return type;
-	}
-	
 	public static void showDialog(Context context, int msgResId, 
 		int positiveBtnTextId, int negativeBtnTextId, 
 		DialogInterface.OnClickListener listener) {
@@ -205,5 +194,33 @@ public class CommonUtil {
 		}
 		
 		return bSuccess && f.delete();
+	}
+	
+	public static Drawable getIconFromApk(Context context, String apkPath) {
+		
+		if((null == apkPath) || !apkPath.endsWith(".apk")) {
+			return null;
+		}
+		
+		Drawable icon = null;
+		PackageManager pm = context.getPackageManager();
+		PackageInfo pi = pm.getPackageArchiveInfo(apkPath, 
+			PackageManager.GET_ACTIVITIES);
+		
+		if(null != pi) {
+			if(Build.VERSION.SDK_INT >= 8) {
+				pi.applicationInfo.sourceDir = apkPath;
+				pi.applicationInfo.publicSourceDir = apkPath;
+			}
+			
+			icon = pi.applicationInfo.loadIcon(pm);
+		}
+		
+		return icon;
+	}
+	
+	public static String getFileExt(String path) {
+		int pos = path.lastIndexOf('.');
+		return (-1 != pos) ? path.substring(pos + 1) : "";
 	}
 }
