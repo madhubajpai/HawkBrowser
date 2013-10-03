@@ -17,7 +17,7 @@
         
          <activity android:name=".shell.HawkBrowser" 
              android:windowSoftInputMode="adjustPan"
-             android:launchMode="singleTask"> 
+             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -43,6 +43,13 @@
 		<activity android:name=".app.BookmarkActivity" />
 		<activity android:name=".app.DownloadActivity" />
 		<activity android:name=".app.SettingActivity" />
+		
+		<activity android:name=".shell.ShortCut">
+		    <intent-filter>
+		        <action android:name="android.intent.action.CREATE_SHORTCUT"/>
+		        <action android:name="android.intent.action.DEFAULT"/>
+		    </intent-filter>
+		</activity>
 		
     </application>
     
